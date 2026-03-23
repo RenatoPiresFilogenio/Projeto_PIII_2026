@@ -63,6 +63,20 @@ vite.config.js  -> configuração do Vite
 package.json    -> scripts e dependências
 ```
 
+## Dependências importantes
+
+- `react` e `react-dom` para a interface
+- `react-router-dom` para navegação entre páginas
+- `framer-motion` para animações de transição e experiências guiadas de scroll
+
+Não é necessário instalar nenhuma biblioteca manualmente além do fluxo padrão:
+
+```bash
+npm install
+```
+
+Esse comando já instala todas as dependências do projeto, incluindo o `framer-motion`.
+
 ## Fluxo recomendado para usar em outra máquina
 
 1. Baixe ou clone o projeto.
@@ -80,3 +94,5 @@ Se quiser testar a versão final:
 - A pasta `node_modules` não precisa ser enviada junto com o projeto.
 - A pasta `dist` é gerada automaticamente pelo build.
 - O projeto é front-end puro nesta etapa, sem dependência de backend para rodar a landing page.
+- A página `Como Funciona` usa `framer-motion` para controlar a transição suave entre etapas no scroll.
+- Para rodar o projeto em outra máquina, basta clonar o repositório, executar `npm install` e depois `npm run dev`.
