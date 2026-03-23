@@ -22,7 +22,7 @@ const aboutHighlights = [
   },
   {
     title: 'Decisão com apoio',
-    text: 'Propostas, editais e indicadores ajudam a transformar busca em parceria e inovação aplicada.',
+    text: 'Propostas, indicadores e sinais do ecossistema ajudam a transformar busca em parceria e inovação aplicada.',
   },
 ]
 
@@ -45,7 +45,7 @@ const aboutPillars = [
   {
     eyebrow: 'Dados e indicadores',
     title: 'Informação estratégica apoia decisões mais maduras de inovação.',
-    text: 'Editais, oportunidades e indicadores ampliam o contexto da busca e ajudam a orientar próximos passos com mais segurança.',
+    text: 'Indicadores e informações estratégicas ampliam o contexto da busca e ajudam a orientar próximos passos com mais segurança.',
   },
 ]
 

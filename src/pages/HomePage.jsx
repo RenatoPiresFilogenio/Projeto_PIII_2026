@@ -33,8 +33,8 @@ const heroSupportCards = [
   },
   {
     eyebrow: 'Oportunidades',
-    title: 'Cruzem a mesma busca com editais, financiamento e sinais do ecossistema.',
-    text: 'Tudo aparece no mesmo fluxo para apoiar decisão, conexão e avanço dos projetos.',
+    title: 'Cruzem a mesma busca com indicadores, aderência e sinais do ecossistema.',
+    text: 'Mais contexto ajuda a apoiar decisão, conexão e avanço dos projetos com mais segurança.',
   },
 ]
 
@@ -267,7 +267,7 @@ export default function HomePage() {
               >
                 <div className="hero-search__shell">
                   <label className="sr-only" htmlFor="hero-search">
-                    Buscar desafios, pesquisadores e editais
+                    Buscar desafios, pesquisadores e soluções
                   </label>
                   <span className="hero-search__icon" aria-hidden="true">
                     Busca
@@ -459,10 +459,10 @@ export default function HomePage() {
             <Reveal>
               <div className="problem-card">
                 <div className="problem-card__icon problem-card__icon--purple">💰</div>
-                <h3 className="problem-card__title">Financiamento Disperso</h3>
+                <h3 className="problem-card__title">Decisão Sem Contexto</h3>
                 <p className="problem-card__text">
-                  Editais e oportunidades de financiamento são difíceis de encontrar e acompanhar de
-                  forma centralizada.
+                  Sem sinais claros de aderência, maturidade e prioridade, boas conexões demoram
+                  mais para acontecer.
                 </p>
               </div>
             </Reveal>
@@ -551,10 +551,10 @@ export default function HomePage() {
               <div className="feature-card">
                 <div className="feature-card__icon feature-card__icon--secondary">📢</div>
                 <div className="feature-card__content">
-                  <h3 className="feature-card__title">Mural de Editais</h3>
+                  <h3 className="feature-card__title">Sinais de Compatibilidade</h3>
                   <p className="feature-card__text">
-                    Editais públicos, programas de incentivo e oportunidades de financiamento
-                    centralizados em um só lugar.
+                    Indicadores e sinais de aderência ajudam a priorizar conexões mais relevantes
+                    com menos ruído.
                   </p>
                 </div>
               </div>

@@ -58,7 +58,6 @@ export default function Navbar() {
           <Link to="/" className={isActive('/') ? 'active' : ''}>Início</Link>
           <Link to="/sobre" className={isActive('/sobre') ? 'active' : ''}>Sobre</Link>
           <Link to="/como-funciona" className={isActive('/como-funciona') ? 'active' : ''}>Como Funciona</Link>
-          <Link to="/editais" className={isActive('/editais') ? 'active' : ''}>Editais</Link>
           <Link to="/indicadores" className={isActive('/indicadores') ? 'active' : ''}>Indicadores</Link>
 
           <div className="navbar__mobile-actions">

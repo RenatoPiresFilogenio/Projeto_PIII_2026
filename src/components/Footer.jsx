@@ -17,7 +17,6 @@ export default function Footer() {
           <div className="footer__col">
             <h4 className="footer__col-title">Plataforma</h4>
             <Link to="/como-funciona">Como Funciona</Link>
-            <Link to="/editais">Editais</Link>
             <Link to="/indicadores">Indicadores</Link>
             <Link to="/login">Entrar</Link>
           </div>

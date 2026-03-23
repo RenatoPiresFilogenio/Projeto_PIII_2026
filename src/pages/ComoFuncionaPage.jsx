@@ -107,10 +107,10 @@ export default function ComoFuncionaPage() {
           <div className="features__grid">
             <Reveal>
               <div className="feature-card">
-                <div className="feature-card__icon">📢</div>
+                <div className="feature-card__icon">🧭</div>
                 <div className="feature-card__content">
-                  <h3 className="feature-card__title">Mural de Editais</h3>
-                  <p className="feature-card__text">Acesse editais públicos, programas de incentivo e oportunidades de financiamento do CNPq, MCTI, CAPES e mais.</p>
+                  <h3 className="feature-card__title">Sinais de Compatibilidade</h3>
+                  <p className="feature-card__text">A plataforma destaca aderência entre perfis, desafios e temas para tornar a descoberta mais objetiva e contextualizada.</p>
                 </div>
               </div>
             </Reveal>
@@ -147,7 +147,7 @@ export default function ComoFuncionaPage() {
               <p className="cta-box__subtitle">Cadastre-se e descubra oportunidades de inovação esperando por você.</p>
               <div className="cta-box__buttons">
                 <Link to="/login" className="btn btn-primary btn-lg">Criar Conta Gratuita</Link>
-                <Link to="/editais" className="btn btn-outline btn-lg">Ver Editais</Link>
+                <Link to="/indicadores" className="btn btn-outline btn-lg">Ver Indicadores</Link>
               </div>
             </div>
           </Reveal>

@@ -1568,71 +1568,6 @@ select {
   line-height: 1.7;
 }
 
-/* Editais */
-.editais__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 24px;
-  margin-top: 40px;
-}
-
-.edital-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  padding: 32px;
-  transition: all var(--transition-normal);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-.edital-card:hover {
-  border-color: rgba(91, 136, 165, 0.15);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-}
-
-.edital-card__badge {
-  display: inline-flex;
-  padding: 4px 12px;
-  border-radius: 50px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
-.edital-card__badge--aberto    { background: rgba(58, 138, 92, 0.12); color: var(--accent-green);     }
-.edital-card__badge--breve     { background: var(--accent-primary-dim); color: var(--accent-primary); }
-.edital-card__badge--encerrado { background: rgba(180, 80, 80, 0.12); color: #b45050;                }
-
-.edital-card__title {
-  font-family: var(--font-primary);
-  font-size: 1.15rem;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.edital-card__org {
-  font-size: 0.85rem;
-  color: var(--accent-primary);
-  margin-bottom: 12px;
-}
-
-.edital-card__text {
-  font-size: 0.88rem;
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: 20px;
-}
-
-.edital-card__meta {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.82rem;
-  color: var(--text-muted);
-  padding-top: 16px;
-  border-top: 1px solid var(--border-color);
-}
-
 /* Indicadores */
 .indicadores__grid {
   display: grid;
@@ -2354,7 +2289,6 @@ select {
   .footer__bottom { flex-direction: column; gap: 12px; text-align: center; }
   .login-box { padding: 36px 24px; }
   .form-row { grid-template-columns: 1fr; }
-  .editais__grid { grid-template-columns: 1fr; }
   .flow-timeline { padding-left: 40px; }
   .flow-item__dot { left: -29px; }
   .page-header { padding: 120px 0 40px; }
