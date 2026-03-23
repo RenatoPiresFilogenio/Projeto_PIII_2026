@@ -1,264 +1,211 @@
-import { useEffect, useRef, useCallback } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import useReveal from '../hooks/useReveal'
+import Reveal from '../components/Reveal'
 
-function Reveal({ children, className = '' }) {
-  const ref = useReveal()
-  return <div ref={ref} className={`reveal ${className}`}>{children}</div>
-}
+const overviewIndicators = [
+  {
+    eyebrow: 'Base científica',
+    value: '180 mil+',
+    label: 'Pesquisadores ativos no Brasil',
+    progress: 85,
+  },
+  {
+    eyebrow: 'Intensidade de investimento',
+    value: '1,3%',
+    label: 'PIB investido em P&D',
+    progress: 45,
+  },
+  {
+    eyebrow: 'Capilaridade acadêmica',
+    value: '350+',
+    label: 'Universidades com pesquisa',
+    progress: 72,
+  },
+  {
+    eyebrow: 'Produção anual',
+    value: '48 mil+',
+    label: 'Artigos científicos por ano',
+    progress: 68,
+  },
+]
 
-/* ── Animated Counter ── */
-function AnimatedCounter({ target, suffix = '', prefix = '' }) {
-  const ref = useRef(null)
-  const animated = useRef(false)
+const secondaryIndicators = [
+  {
+    eyebrow: 'Posicionamento global',
+    value: '13º',
+    label: 'Ranking em produção científica',
+    progress: 60,
+  },
+  {
+    eyebrow: 'Propriedade intelectual',
+    value: '7,5 mil+',
+    label: 'Patentes registradas por ano',
+    progress: 38,
+  },
+  {
+    eyebrow: 'Aplicação prática',
+    value: '25%',
+    label: 'Pesquisas aplicadas ao mercado',
+    progress: 25,
+  },
+  {
+    eyebrow: 'Rede de inovação',
+    value: '2,2 mil+',
+    label: 'Grupos de pesquisa em inovação',
+    progress: 55,
+  },
+]
 
-  const animate = useCallback(() => {
-    if (animated.current || !ref.current) return
-    animated.current = true
-    const duration = 2000
-    const start = performance.now()
+const regionalDistribution = [
+  { label: 'Sudeste', value: '70%', height: '70%' },
+  { label: 'Sul', value: '45%', height: '45%' },
+  { label: 'Nordeste', value: '35%', height: '35%' },
+  { label: 'Centro-Oeste', value: '25%', height: '25%' },
+  { label: 'Norte', value: '15%', height: '15%' },
+]
 
-    function update(now) {
-      const progress = Math.min((now - start) / duration, 1)
-      const eased = 1 - Math.pow(1 - progress, 3)
-      const current = Math.floor(eased * target)
-      if (ref.current) {
-        ref.current.textContent = prefix + current.toLocaleString('pt-BR') + suffix
-      }
-      if (progress < 1) requestAnimationFrame(update)
-    }
+const areaDistribution = [
+  { label: 'Engenharias', value: '80 mil', height: '80%' },
+  { label: 'Saúde', value: '65 mil', height: '65%' },
+  { label: 'Exatas', value: '55 mil', height: '55%' },
+  { label: 'Agrárias', value: '45 mil', height: '45%' },
+  { label: 'Humanas', value: '40 mil', height: '40%' },
+  { label: 'Biológicas', value: '30 mil', height: '30%' },
+]
 
-    requestAnimationFrame(update)
-  }, [target, suffix, prefix])
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            animate()
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.5 }
-    )
-
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [animate])
-
-  return <div ref={ref} className="indicador-card__value">0</div>
-}
-
-/* ── Animated Bar ── */
-function AnimatedBar({ width }) {
-  const ref = useRef(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    el.style.width = '0%'
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            el.style.width = width
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.5 }
-    )
-
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [width])
-
-  return <div ref={ref} className="indicador-card__bar-fill" style={{ width: '0%' }}></div>
-}
-
-/* ── Chart Bar ── */
-function ChartBar({ height, label, secondary = false }) {
-  const ref = useRef(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-
-    el.style.height = '0%'
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            el.style.height = height
-            observer.unobserve(entry.target)
-          }
-        })
-      },
-      { threshold: 0.3 }
-    )
-
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [height])
-
+function IndicatorCard({ item, shouldReduceMotion }) {
   return (
-    <div className="chart-bar">
-      <div
-        ref={ref}
-        className={`chart-bar__fill${secondary ? ' chart-bar__fill--secondary' : ''}`}
-        style={{ height: '0%' }}
-      ></div>
-      <div className="chart-bar__label">{label}</div>
-    </div>
+    <article className="indicador-card">
+      <span className="indicador-card__eyebrow">{item.eyebrow}</span>
+      <div className="indicador-card__value">{item.value}</div>
+      <p className="indicador-card__label">{item.label}</p>
+
+      <div className="indicador-card__bar" aria-hidden="true">
+        <motion.div
+          className="indicador-card__bar-fill"
+          style={{ width: `${item.progress}%`, transformOrigin: 'left center' }}
+          initial={shouldReduceMotion ? { scaleX: 1 } : { scaleX: 0 }}
+          whileInView={{ scaleX: 1 }}
+          viewport={{ once: true, amount: 0.45 }}
+          transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </div>
+    </article>
+  )
+}
+
+function DistributionChart({ eyebrow, title, subtitle, items, secondary = false, shouldReduceMotion }) {
+  return (
+    <article className="chart-panel">
+      <div className="chart-panel__head">
+        <span className="chart-panel__eyebrow">{eyebrow}</span>
+        <h3 className="chart-panel__title">{title}</h3>
+        <p className="chart-panel__subtitle">{subtitle}</p>
+      </div>
+
+      <div className="chart-bars" aria-hidden="true">
+        {items.map((item, index) => (
+          <div key={item.label} className="chart-bar">
+            <div className="chart-bar__track">
+              <motion.div
+                className={`chart-bar__fill${secondary ? ' chart-bar__fill--secondary' : ''}`}
+                initial={shouldReduceMotion ? { height: item.height } : { height: '0%' }}
+                whileInView={{ height: item.height }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={
+                  shouldReduceMotion
+                    ? { duration: 0 }
+                    : { duration: 0.55, delay: index * 0.05, ease: [0.22, 1, 0.36, 1] }
+                }
+              />
+            </div>
+            <div className="chart-bar__meta">
+              <span className="chart-bar__value">{item.value}</span>
+              <span className="chart-bar__label">{item.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </article>
   )
 }
 
 export default function IndicadoresPage() {
+  const shouldReduceMotion = useReducedMotion()
+
   return (
     <>
-      {/* PAGE HEADER */}
       <section className="page-header">
         <div className="container">
-          <span className="section-label">Dashboard</span>
-          <h1 className="page-header__title">Indicadores de <span className="text-gradient">Inovação</span></h1>
-          <p className="page-header__text">Dados e estatísticas sobre pesquisa, desenvolvimento e inovação no Brasil.</p>
+          <span className="section-label">Indicadores</span>
+          <h1 className="page-header__title">
+            Leituras de <span className="text-gradient">pesquisa</span> e{' '}
+            <span className="text-gradient">inovação</span>
+          </h1>
+          <p className="page-header__text">
+            Um panorama visual do ecossistema que a plataforma ajuda a conectar entre indústria,
+            pesquisa aplicada e capacidade de inovação.
+          </p>
         </div>
       </section>
 
-      {/* INDICADORES */}
-      <section className="section">
+      <section className="section indicators-stage">
         <div className="container">
-          <div className="indicadores__grid">
+          <div className="indicators__grid">
+            {overviewIndicators.map((item) => (
+              <Reveal key={item.label}>
+                <IndicatorCard item={item} shouldReduceMotion={shouldReduceMotion} />
+              </Reveal>
+            ))}
+          </div>
+
+          <div className="indicators__charts">
             <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={180000} suffix="+" />
-                <div className="indicador-card__label">Pesquisadores Ativos no Brasil</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="85%" />
-                </div>
-              </div>
+              <DistributionChart
+                eyebrow="Distribuição regional"
+                title="Investimento em P&D por região"
+                subtitle="Participação estimada no total nacional de investimento em pesquisa e desenvolvimento."
+                items={regionalDistribution}
+                shouldReduceMotion={shouldReduceMotion}
+              />
             </Reveal>
 
             <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={1} suffix=",3%" prefix="R$ " />
-                <div className="indicador-card__label">PIB investido em P&D</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="45%" />
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={350} suffix="+" />
-                <div className="indicador-card__label">Universidades com Pesquisa</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="72%" />
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={48000} suffix="+" />
-                <div className="indicador-card__label">Artigos Científicos/Ano</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="68%" />
-                </div>
-              </div>
+              <DistributionChart
+                eyebrow="Distribuição por área"
+                title="Pesquisadores por área de atuação"
+                subtitle="Leitura comparativa entre áreas com maior massa crítica de pesquisa no país."
+                items={areaDistribution}
+                secondary
+                shouldReduceMotion={shouldReduceMotion}
+              />
             </Reveal>
           </div>
 
-          {/* BAR CHART 1 */}
-          <Reveal>
-            <div className="chart-container">
-              <h3 className="chart-container__title">Investimento em P&D por Região (% do total)</h3>
-              <div className="chart-bars">
-                <ChartBar height="70%" label="Sudeste" />
-                <ChartBar height="45%" label="Sul" />
-                <ChartBar height="35%" label="Nordeste" />
-                <ChartBar height="25%" label="Centro-Oeste" />
-                <ChartBar height="15%" label="Norte" />
-              </div>
-            </div>
-          </Reveal>
-
-          {/* BAR CHART 2 */}
-          <Reveal>
-            <div className="chart-container" style={{ marginTop: '24px' }}>
-              <h3 className="chart-container__title">Número de Pesquisadores por Área (em milhares)</h3>
-              <div className="chart-bars">
-                <ChartBar height="80%" label="Engenharias" secondary />
-                <ChartBar height="65%" label="Ciências da Saúde" secondary />
-                <ChartBar height="55%" label="Exatas" secondary />
-                <ChartBar height="45%" label="Agrárias" secondary />
-                <ChartBar height="40%" label="Humanas" secondary />
-                <ChartBar height="30%" label="Biológicas" secondary />
-              </div>
-            </div>
-          </Reveal>
-
-          {/* MORE INDICATORS */}
-          <div className="indicadores__grid" style={{ marginTop: '40px' }}>
-            <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={13} suffix="º" />
-                <div className="indicador-card__label">Ranking Global em Produção Científica</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="60%" />
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={7500} suffix="+" />
-                <div className="indicador-card__label">Patentes Registradas/Ano</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="38%" />
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={25} suffix="%" />
-                <div className="indicador-card__label">Pesquisas Aplicadas ao Mercado</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="25%" />
-                </div>
-              </div>
-            </Reveal>
-
-            <Reveal>
-              <div className="indicador-card">
-                <AnimatedCounter target={2200} suffix="+" />
-                <div className="indicador-card__label">Grupos de Pesquisa em Inovação</div>
-                <div className="indicador-card__bar">
-                  <AnimatedBar width="55%" />
-                </div>
-              </div>
-            </Reveal>
+          <div className="indicators__grid indicators__grid--secondary">
+            {secondaryIndicators.map((item) => (
+              <Reveal key={item.label}>
+                <IndicatorCard item={item} shouldReduceMotion={shouldReduceMotion} />
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
       <section className="section cta-section">
         <div className="container">
           <Reveal>
             <div className="cta-box">
-              <h2 className="cta-box__title">Contribua para esses <span className="text-gradient">números</span></h2>
-              <p className="cta-box__subtitle">Faça parte da rede que está transformando a inovação no Brasil.</p>
+              <h2 className="cta-box__title">
+                Transforme esses sinais em <span className="text-gradient">conexões aplicadas</span>
+              </h2>
+              <p className="cta-box__subtitle">
+                Entre na plataforma para aproximar desafio, pesquisa e decisão com mais contexto.
+              </p>
               <div className="cta-box__buttons">
-                <Link to="/login" className="btn btn-primary btn-lg">Cadastre-se Agora</Link>
+                <Link to="/login" className="btn btn-primary btn-lg">
+                  Cadastrar-se
+                </Link>
               </div>
             </div>
           </Reveal>

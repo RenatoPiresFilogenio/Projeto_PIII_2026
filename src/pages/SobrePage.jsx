@@ -1,15 +1,5 @@
 import { Link } from 'react-router-dom'
-import useReveal from '../hooks/useReveal'
-
-function Reveal({ children, className = '' }) {
-  const ref = useReveal()
-
-  return (
-    <div ref={ref} className={`reveal ${className}`}>
-      {children}
-    </div>
-  )
-}
+import Reveal from '../components/Reveal'
 
 const aboutHighlights = [
   {
@@ -80,17 +70,23 @@ export default function SobrePage() {
                   Transformamos pesquisa aplicada em conexão real com a indústria.
                 </h1>
 
-                <p className="about-hero__text">
-                  A Innovare é uma plataforma web criada para aproximar empresas que enfrentam
-                  desafios tecnológicos de pesquisadores e desenvolvedores capazes de responder
-                  com conhecimento, propostas e soluções em desenvolvimento.
-                </p>
+                <div className="about-hero__body">
+                  <p className="about-hero__text">
+                    A Innovare é uma plataforma web criada para aproximar empresas que enfrentam
+                    desafios tecnológicos de pesquisadores e desenvolvedores capazes de responder
+                    com conhecimento, propostas e soluções em desenvolvimento.
+                  </p>
 
-                <p className="about-hero__support">
-                  Em vez de dispersar problema, especialista, oportunidade e contexto em vários
-                  lugares, organizamos tudo em uma experiência mais clara de descoberta,
-                  colaboração e avanço da inovação.
-                </p>
+                  <div className="about-hero__support-block">
+                    <span className="about-hero__support-label">Menos dispersão, mais contexto</span>
+                    <p className="about-hero__support">
+                      Em vez de espalhar problema, especialista e oportunidade em vários lugares,
+                      organizamos tudo em uma experiência mais clara de descoberta, colaboração e
+                      avanço da inovação.
+                    </p>
+                  </div>
+                </div>
+
                 <div className="about-hero__highlights">
                   {aboutHighlights.map((item, index) => (
                     <article key={item.title} className="about-hero__highlight">
@@ -114,10 +110,7 @@ export default function SobrePage() {
         <div className="container">
           <Reveal className="text-center">
             <span className="section-label">Pilares da plataforma</span>
-            <h2 className="section-title">
-              A proposta do Innovare fica clara quando problema, expertise e decisão aparecem
-              no mesmo fluxo.
-            </h2>
+            <h2 className="section-title">Problema, expertise e decisão no mesmo fluxo.</h2>
             <p className="section-subtitle">
               Cada camada da plataforma ajuda a transformar uma demanda difusa em oportunidade
               concreta de colaboração, pesquisa aplicada e inovação.

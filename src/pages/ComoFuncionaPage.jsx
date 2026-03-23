@@ -1,16 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import useReveal from '../hooks/useReveal'
-
-function Reveal({ children, className = '' }) {
-  const ref = useReveal()
-
-  return (
-    <div ref={ref} className={`reveal ${className}`}>
-      {children}
-    </div>
-  )
-}
+import Reveal from '../components/Reveal'
 
 const journeySteps = [
   {
@@ -117,8 +107,8 @@ export default function ComoFuncionaPage() {
             <span className="text-gradient">solução</span>
           </h1>
           <p className="page-header__text">
-            Entenda a jornada da plataforma com uma progressão guiada, do cadastro até a evolução
-            das parcerias.
+            Entenda a jornada da plataforma do cadastro até a evolução das parcerias, com cada
+            etapa organizada para reduzir ruído e apoiar a próxima decisão.
           </p>
         </div>
       </section>
@@ -128,12 +118,28 @@ export default function ComoFuncionaPage() {
           <Reveal className="text-center">
             <span className="section-label">Fluxo da Plataforma</span>
             <h2 className="section-title">
-              Uma jornada por etapas, com foco total em cada decisão.
+              Quatro etapas para transformar busca em colaboração aplicada.
             </h2>
             <p className="section-subtitle">
-              Role a página para acompanhar o passo a passo da experiência. Cada etapa assume o
-              centro da tela para orientar a próxima ação com mais clareza.
+              O fluxo foi desenhado para orientar descoberta, correspondência, proposta e
+              acompanhamento com mais clareza.
             </p>
+          </Reveal>
+
+          <Reveal>
+            <div className="process-journey__overview">
+              {journeySteps.map((step, index) => (
+                <article key={step.id} className="process-journey__overview-item">
+                  <div className="process-journey__overview-top">
+                    <span className="process-journey__overview-number">{step.step}</span>
+                    {index < journeySteps.length - 1 ? (
+                      <span className="process-journey__overview-connector" aria-hidden="true" />
+                    ) : null}
+                  </div>
+                  <h3 className="process-journey__overview-title">{step.eyebrow}</h3>
+                </article>
+              ))}
+            </div>
           </Reveal>
         </div>
 
@@ -164,30 +170,40 @@ export default function ComoFuncionaPage() {
                   </div>
                 </div>
 
-                <p className="process-step-card__text">{step.text}</p>
-
-                {step.details ? (
-                  <div className="process-step-card__details">
-                    {step.details.map((detail) => (
-                      <div key={detail.label} className="process-step-card__detail">
-                        <span className="process-step-card__detail-label">{detail.label}</span>
-                        <p className="process-step-card__detail-text">{detail.text}</p>
-                      </div>
-                    ))}
+                <div className="process-step-card__layout">
+                  <div className="process-step-card__copy">
+                    <p className="process-step-card__text">{step.text}</p>
                   </div>
-                ) : null}
 
-                <div className="process-step-card__tags">
-                  {step.tags.map((tag) => (
-                    <span
-                      key={tag.label}
-                      className={`process-step-card__tag${
-                        tag.tone ? ` process-step-card__tag--${tag.tone}` : ''
-                      }`}
-                    >
-                      {tag.label}
-                    </span>
-                  ))}
+                  <div
+                    className={`process-step-card__support${
+                      step.details ? '' : ' process-step-card__support--tags-only'
+                    }`}
+                  >
+                    {step.details ? (
+                      <div className="process-step-card__details">
+                        {step.details.map((detail) => (
+                          <div key={detail.label} className="process-step-card__detail">
+                            <span className="process-step-card__detail-label">{detail.label}</span>
+                            <p className="process-step-card__detail-text">{detail.text}</p>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+
+                    <div className="process-step-card__tags">
+                      {step.tags.map((tag) => (
+                        <span
+                          key={tag.label}
+                          className={`process-step-card__tag${
+                            tag.tone ? ` process-step-card__tag--${tag.tone}` : ''
+                          }`}
+                        >
+                          {tag.label}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </motion.article>
             ))}
