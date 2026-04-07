@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
+import { useAuth } from '../context/AuthContext'
 
 const overviewIndicators = [
   {
@@ -132,6 +133,7 @@ function DistributionChart({ eyebrow, title, subtitle, items, secondary = false,
 
 export default function IndicadoresPage() {
   const shouldReduceMotion = useReducedMotion()
+  const { isAuthenticated } = useAuth()
 
   return (
     <>
@@ -203,9 +205,20 @@ export default function IndicadoresPage() {
                 Entre na plataforma para aproximar desafio, pesquisa e decisão com mais contexto.
               </p>
               <div className="cta-box__buttons">
-                <Link to="/login" className="btn btn-primary btn-lg">
-                  Cadastrar-se
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link to="/pesquisa" className="btn btn-primary btn-lg">
+                      Voltar para pesquisa
+                    </Link>
+                    <Link to="/perfil" className="btn btn-outline btn-lg">
+                      Editar perfil
+                    </Link>
+                  </>
+                ) : (
+                  <Link to="/login" className="btn btn-primary btn-lg">
+                    Cadastrar-se
+                  </Link>
+                )}
               </div>
             </div>
           </Reveal>

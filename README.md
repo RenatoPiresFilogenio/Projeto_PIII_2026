@@ -1,31 +1,58 @@
-# Innovare Landing Page
+# P&D Connect Front-end
 
-Landing page front-end da plataforma **Innovare**, focada em conectar empresas com desafios tecnológicos, pesquisadores com soluções e oportunidades relacionadas à inovação.
+Front-end em React + Vite da plataforma **P&D Connect**, uma interface que conecta empresas e pesquisadores em fluxos de Pesquisa e Desenvolvimento.
+
+Nesta etapa, o projeto funciona como **front-end demonstrativo**, com:
+
+- landing page institucional;
+- login mockado;
+- fluxo autenticado com redirecionamento para pesquisa;
+- navegacao adaptada por tipo de usuario;
+- busca semantica simulada;
+- edicao de perfil;
+- publicacao de desafio para empresa.
+
+Ainda **nao ha integracao real com API, banco ou autenticacao de back-end**.
+
+## Stack
+
+- `React 19`
+- `Vite 6`
+- `React Router DOM 7`
+- `Framer Motion`
 
 ## Requisitos
 
-- Node.js `18` ou superior
-- npm `9` ou superior
+Antes de rodar o projeto, tenha instalado:
 
-## Como rodar localmente
+- `Node.js 18` ou superior
+- `npm 9` ou superior
 
-1. Abra o terminal na pasta do projeto.
-2. Instale as dependências:
+## Como rodar o projeto
+
+1. Clone ou baixe este repositorio.
+2. Abra o terminal na pasta do projeto.
+3. Instale as dependencias:
 
 ```bash
 npm install
 ```
 
-3. Inicie o servidor de desenvolvimento:
+4. Inicie o ambiente de desenvolvimento:
 
 ```bash
 npm run dev
 ```
 
-4. Abra no navegador o endereço exibido no terminal.
-   Em geral, o Vite usa algo como `http://localhost:5173`.
+5. Abra no navegador o endereco exibido no terminal.
 
-## Scripts disponíveis
+Em geral, o Vite sobe em algo como:
+
+```text
+http://localhost:5173
+```
+
+## Scripts disponiveis
 
 ### Desenvolvimento
 
@@ -33,15 +60,15 @@ npm run dev
 npm run dev
 ```
 
-Inicia o projeto em modo desenvolvimento com recarregamento automático.
+Inicia o servidor local com recarregamento automatico.
 
-### Build de produção
+### Build de producao
 
 ```bash
 npm run build
 ```
 
-Gera a versão otimizada na pasta `dist/`.
+Gera a build otimizada na pasta `dist/`.
 
 ### Preview da build
 
@@ -49,50 +76,109 @@ Gera a versão otimizada na pasta `dist/`.
 npm run preview
 ```
 
-Serve localmente a build gerada em `dist/` para validação final.
+Serve localmente a build gerada para conferencia final.
 
-## Estrutura principal
+## Fluxo atual do front-end
+
+### Area publica
+
+Rotas disponiveis sem login:
+
+- `/`
+- `/sobre`
+- `/como-funciona`
+- `/indicadores`
+- `/login`
+
+### Area autenticada
+
+Apos o login, o usuario e redirecionado automaticamente para:
+
+```text
+/pesquisa
+```
+
+Na area autenticada existem:
+
+- `Pesquisa`
+- `Indicadores`
+- `Editar perfil`
+- `Publicar desafio` somente para empresa
+
+## Perfis demo para teste
+
+O projeto ja possui dois perfis mockados prontos para navegacao.
+
+### Empresa
+
+- E-mail: `contato@ecomove.com.br`
+- Senha: `empresa123`
+
+### Pesquisador
+
+- E-mail: `camila.nunes@ufscar.br`
+- Senha: `pesquisa123`
+
+Tambem existem botoes de acesso rapido na tela de login para entrar com esses perfis.
+
+## O que esta mockado
+
+Como ainda nao existe API nesta fase, os seguintes comportamentos sao simulados no front-end:
+
+- autenticacao;
+- sessao do usuario;
+- tipo de usuario;
+- resultados da busca semantica;
+- interpretacao por IA e extracao de temas;
+- dados de perfil;
+- desafios publicados;
+- formulario de publicacao de desafio.
+
+## Estrutura principal do projeto
 
 ```text
 src/
-  components/   -> componentes reutilizáveis
-  pages/        -> páginas da aplicação
-  hooks/        -> hooks utilitários
-index.html      -> entrada principal
-vite.config.js  -> configuração do Vite
-package.json    -> scripts e dependências
+  components/   -> componentes reutilizaveis e layouts
+  context/      -> contexto de autenticacao mockada
+  mocks/        -> dados fake do dominio
+  pages/        -> paginas publicas e autenticadas
+index.html      -> entrada da aplicacao
+vite.config.js  -> configuracao do Vite
+package.json    -> scripts e dependencias
 ```
 
-## Dependências importantes
+## Organizacao do dominio no front-end
 
-- `react` e `react-dom` para a interface
-- `react-router-dom` para navegação entre páginas
-- `framer-motion` para animações de transição e experiências guiadas de scroll
+Os mocks e a interface seguem o dominio definido no projeto:
 
-Não é necessário instalar nenhuma biblioteca manualmente além do fluxo padrão:
+- usuarios
+- tipo de usuario
+- pesquisador
+- empresa
+- area de pesquisa
+- curriculo
+- habilidades
+- formacao
+- experiencias
+- pesquisa
+- desafio tecnologico
+
+## Observacoes importantes
+
+- `node_modules` **nao deve** ser versionado.
+- `dist` e gerado automaticamente por `npm run build`.
+- o projeto pode ser executado em outra maquina apenas com:
+  - `npm install`
+  - `npm run dev`
+- nao e necessario configurar banco, variaveis de ambiente ou servicos externos para ver o front-end funcionando nesta fase.
+
+## Passo rapido para outra maquina
+
+Se alguem baixar o projeto do GitHub, o fluxo e:
 
 ```bash
 npm install
+npm run dev
 ```
 
-Esse comando já instala todas as dependências do projeto, incluindo o `framer-motion`.
-
-## Fluxo recomendado para usar em outra máquina
-
-1. Baixe ou clone o projeto.
-2. Entre na pasta do projeto.
-3. Rode `npm install`.
-4. Rode `npm run dev`.
-
-Se quiser testar a versão final:
-
-1. Rode `npm run build`.
-2. Rode `npm run preview`.
-
-## Observações
-
-- A pasta `node_modules` não precisa ser enviada junto com o projeto.
-- A pasta `dist` é gerada automaticamente pelo build.
-- O projeto é front-end puro nesta etapa, sem dependência de backend para rodar a landing page.
-- A página `Como Funciona` usa `framer-motion` para controlar a transição suave entre etapas no scroll.
-- Para rodar o projeto em outra máquina, basta clonar o repositório, executar `npm install` e depois `npm run dev`.
+Depois disso, basta abrir o endereco local exibido pelo Vite e testar a interface.

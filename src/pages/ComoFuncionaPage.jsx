@@ -70,18 +70,18 @@ const journeySteps = [
 
 const resourceCards = [
   {
-    icon: '🧭',
+    icon: '\u{1F9ED}',
     title: 'Sinais de compatibilidade',
     text: 'A plataforma destaca aderência entre perfis, desafios e temas para tornar a descoberta mais objetiva e contextualizada.',
   },
   {
-    icon: '📊',
+    icon: '\u{1F4CA}',
     title: 'Dashboard de indicadores',
     text: 'Visualize dados sobre pesquisadores, investimentos em P&D e comparações regionais para entender o cenário de inovação.',
     iconModifier: 'feature-card__icon--secondary',
   },
   {
-    icon: '🔐',
+    icon: '\u{1F510}',
     title: 'Segurança de dados',
     text: 'Todas as informações são armazenadas com segurança, garantindo a privacidade de empresas e pesquisadores.',
     iconModifier: 'feature-card__icon--warm',
@@ -115,7 +115,7 @@ export default function ComoFuncionaPage() {
 
       <section className="section process-journey">
         <div className="container">
-          <Reveal className="text-center">
+          <Reveal className="text-center process-journey__intro">
             <span className="section-label">Fluxo da Plataforma</span>
             <h2 className="section-title">
               Quatro etapas para transformar busca em colaboração aplicada.
@@ -128,22 +128,15 @@ export default function ComoFuncionaPage() {
 
           <Reveal>
             <div className="process-journey__overview">
-              {journeySteps.map((step, index) => (
+              {journeySteps.map((step) => (
                 <article key={step.id} className="process-journey__overview-item">
-                  <div className="process-journey__overview-top">
-                    <span className="process-journey__overview-number">{step.step}</span>
-                    {index < journeySteps.length - 1 ? (
-                      <span className="process-journey__overview-connector" aria-hidden="true" />
-                    ) : null}
-                  </div>
+                  <span className="process-journey__overview-number">{step.step}</span>
                   <h3 className="process-journey__overview-title">{step.eyebrow}</h3>
                 </article>
               ))}
             </div>
           </Reveal>
-        </div>
 
-        <div className="container">
           <div className="process-journey__stack">
             {journeySteps.map((step) => (
               <motion.article

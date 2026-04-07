@@ -1,8 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Reveal from '../components/Reveal'
-
-const heroSuggestions = ['IA', 'Renato', 'Charles', 'sustentável']
 
 const heroSignals = [
   { value: '500+', label: 'perfis técnicos e científicos mapeados' },
@@ -14,17 +11,17 @@ const heroSupportCards = [
   {
     eyebrow: 'Empresas',
     title: 'Publiquem desafios com contexto e encontrem especialistas aderentes.',
-    text: 'A busca aproxima problema, setor e maturidade em uma experiência mais objetiva.',
+    text: 'A plataforma aproxima problema, setor e maturidade para acelerar conexões mais objetivas.',
   },
   {
     eyebrow: 'Pesquisadores',
     title: 'Descubram demandas reais compatíveis com sua linha de pesquisa.',
-    text: 'A plataforma destaca oportunidades aplicadas e facilita propostas de parceria mais qualificadas.',
+    text: 'Oportunidades aplicadas aparecem com mais clareza e facilitam propostas de parceria qualificadas.',
   },
   {
     eyebrow: 'Oportunidades',
-    title: 'Cruzem a mesma busca com indicadores, aderência e sinais do ecossistema.',
-    text: 'Mais contexto ajuda a apoiar decisão, conexão e avanço dos projetos com menos ruído.',
+    title: 'Cruzem decisões com indicadores, aderência e sinais do ecossistema.',
+    text: 'Mais contexto ajuda a avançar projetos com menos ruído e mais segurança na priorização.',
   },
 ]
 
@@ -106,195 +103,7 @@ const featureCards = [
   },
 ]
 
-const searchPreviewScenarios = {
-  ia: [
-    {
-      id: 'ia-renato',
-      kind: 'pesquisador',
-      title: 'Renato Silva',
-      description: 'Especialista em IA aplicada à indústria e manutenção preditiva.',
-      meta: 'Universidade Federal | Visão computacional e automação',
-    },
-    {
-      id: 'ia-technova',
-      kind: 'empresa',
-      title: 'Empresa TechNova',
-      description: 'Busca automação com IA para reduzir falhas e gargalos na produção.',
-      meta: 'Desafio ativo | Manufatura avançada',
-    },
-    {
-      id: 'ia-logistica',
-      kind: 'projeto',
-      title: 'Projeto: IA para otimização logística',
-      description: 'Solução para prever rotas, reduzir custos operacionais e ganhar escala.',
-      meta: 'Solução aplicada | Supply chain industrial',
-    },
-  ],
-  renato: [
-    {
-      id: 'renato-profile',
-      kind: 'pesquisador',
-      title: 'Renato Silva',
-      description: 'Pesquisador em IA industrial com foco em inspeção visual e predição de falhas.',
-      meta: 'Linhas de pesquisa | Automação e dados',
-    },
-    {
-      id: 'renato-demand',
-      kind: 'empresa',
-      title: 'Empresa MetalForge',
-      description: 'Procura parceiro para visão computacional em controle de qualidade fabril.',
-      meta: 'Demanda aberta | Indústria metalmecânica',
-    },
-    {
-      id: 'renato-solution',
-      kind: 'projeto',
-      title: 'Projeto: Diagnóstico preditivo para linhas de usinagem',
-      description: 'Combina sensores e IA para antecipar manutenção e reduzir parada de máquina.',
-      meta: 'Parceria sugerida | Aplicação industrial',
-    },
-  ],
-  charles: [
-    {
-      id: 'charles-profile',
-      kind: 'pesquisador',
-      title: 'Charles Almeida',
-      description: 'Especialista em manufatura avançada, materiais inteligentes e prototipagem.',
-      meta: 'Instituição de pesquisa | Materiais e processos',
-    },
-    {
-      id: 'charles-demand',
-      kind: 'empresa',
-      title: 'Empresa BioForge',
-      description: 'Busca pesquisador para escalar novos materiais com aplicação industrial.',
-      meta: 'Oportunidade ativa | Novos materiais',
-    },
-    {
-      id: 'charles-solution',
-      kind: 'projeto',
-      title: 'Projeto: Plataforma de rastreabilidade para P&D colaborativo',
-      description: 'Integra testes, protótipos e marcos técnicos em um fluxo único de inovação.',
-      meta: 'Solução colaborativa | Desenvolvimento tecnológico',
-    },
-  ],
-  sustentavel: [
-    {
-      id: 'sustentavel-profile',
-      kind: 'pesquisador',
-      title: 'Larissa Costa',
-      description: 'Pesquisadora em materiais sustentáveis, economia circular e embalagens.',
-      meta: 'Pesquisa aplicada | Sustentabilidade industrial',
-    },
-    {
-      id: 'sustentavel-demand',
-      kind: 'empresa',
-      title: 'Empresa VerdeVale',
-      description: 'Busca solução para embalagens de baixo impacto e redução de resíduos.',
-      meta: 'Desafio estratégico | Cadeia de alimentos',
-    },
-    {
-      id: 'sustentavel-solution',
-      kind: 'projeto',
-      title: 'Projeto: Bioembalagem sustentável para cadeia de alimentos',
-      description: 'Alternativa com menor impacto ambiental e maior aderência a exigências regulatórias.',
-      meta: 'Solução em desenvolvimento | Economia circular',
-    },
-  ],
-}
-
-const searchPreviewPool = Object.values(searchPreviewScenarios).flat()
-
-const resultKindLabels = {
-  pesquisador: 'Pesquisador',
-  empresa: 'Empresa',
-  projeto: 'Projeto / Solução',
-}
-
-function normalizeText(value) {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim()
-}
-
-function getSearchPreviewResults(query) {
-  const normalizedQuery = normalizeText(query)
-
-  if (normalizedQuery.length < 2) {
-    return []
-  }
-
-  const directScenario = Object.entries(searchPreviewScenarios).find(([trigger]) => (
-    normalizedQuery.includes(trigger) || trigger.includes(normalizedQuery)
-  ))
-
-  if (directScenario) {
-    return directScenario[1]
-  }
-
-  const tokens = normalizedQuery.split(/\s+/).filter(Boolean)
-
-  return searchPreviewPool
-    .map((result) => {
-      const haystack = normalizeText(
-        [result.title, result.description, result.meta, result.kind].join(' ')
-      )
-
-      const score = tokens.reduce((total, token) => (
-        haystack.includes(token) ? total + Math.max(1, token.length - 1) : total
-      ), 0)
-
-      return { ...result, score }
-    })
-    .filter((result) => result.score > 0)
-    .sort((first, second) => second.score - first.score)
-    .slice(0, 3)
-}
-
 export default function HomePage() {
-  const searchPanelRef = useRef(null)
-  const searchInputRef = useRef(null)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [isSearchActive, setIsSearchActive] = useState(false)
-
-  const previewResults = getSearchPreviewResults(searchQuery)
-  const hasSearchQuery = searchQuery.trim().length > 0
-  const showSearchPreview = isSearchActive && hasSearchQuery
-
-  const applySuggestion = (suggestion) => {
-    setSearchQuery(suggestion)
-    setIsSearchActive(true)
-
-    requestAnimationFrame(() => {
-      if (!searchInputRef.current) return
-      searchInputRef.current.focus()
-      searchInputRef.current.setSelectionRange(suggestion.length, suggestion.length)
-    })
-  }
-
-  useEffect(() => {
-    const handlePointerDown = (event) => {
-      if (!searchPanelRef.current?.contains(event.target)) {
-        setIsSearchActive(false)
-      }
-    }
-
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        setIsSearchActive(false)
-        searchInputRef.current?.blur()
-      }
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [])
-
   return (
     <>
       <section className="hero" id="hero">
@@ -302,146 +111,39 @@ export default function HomePage() {
         <div className="hero__bg-glow hero__bg-glow--right"></div>
 
         <div className="container">
-          <div className="hero__content">
+          <div className="hero__content hero__content--centered">
             <div className="hero__badge">
               <span className="badge-dot"></span>
               ODS 9 | Pesquisa, indústria e inovação conectadas
             </div>
 
             <h1 className="hero__title">
-              Busque a conexão certa entre empresas com desafios e pesquisadores com soluções
+              Conecte empresas com desafios a pesquisadores com soluções
             </h1>
 
             <p className="hero__description">
-              A Innovare transforma a busca no ponto de encontro entre desafios tecnológicos,
-              expertise científica e oportunidades de inovação.
-            </p>
-          </div>
-
-          <div className="hero__search-wrap">
-            <p className="hero__search-lead">
-              Digite um nome, tema ou tecnologia e veja demanda, especialista e solução no mesmo
-              fluxo.
+              A Innovare organiza o encontro entre desafios tecnológicos, expertise científica e
+              oportunidades de inovação em uma experiência mais clara e orientada à colaboração.
             </p>
 
-            <div ref={searchPanelRef} className="hero-search">
-              <form
-                className="hero-search__form"
-                onSubmit={(event) => {
-                  event.preventDefault()
-                  setIsSearchActive(true)
-                }}
-              >
-                <div className="hero-search__shell">
-                  <label className="sr-only" htmlFor="hero-search">
-                    Buscar desafios, pesquisadores e soluções
-                  </label>
-                  <span className="hero-search__icon" aria-hidden="true">
-                    Busca
-                  </span>
-
-                  <input
-                    id="hero-search"
-                    ref={searchInputRef}
-                    type="text"
-                    className="hero-search__input"
-                    value={searchQuery}
-                    onChange={(event) => {
-                      setSearchQuery(event.target.value)
-                      setIsSearchActive(true)
-                    }}
-                    onFocus={() => setIsSearchActive(true)}
-                    placeholder="Digite IA, Renato, Charles ou sustentável"
-                  />
-
-                  <button type="submit" className="hero-search__button">
-                    Explorar conexões
-                  </button>
-                </div>
-              </form>
-
-              {showSearchPreview && (
-                <div className="hero-search__dropdown" role="listbox" aria-live="polite">
-                  <div className="hero-search__dropdown-head">
-                    <div>
-                      <p className="hero-search__dropdown-eyebrow">Conexões sugeridas</p>
-                      <p className="hero-search__dropdown-title">
-                        Pesquisador, empresa e solução relacionados à sua busca
-                      </p>
-                    </div>
-
-                    <span className="hero-search__dropdown-query">
-                      {searchQuery.trim()}
-                    </span>
-                  </div>
-
-                  {previewResults.length > 0 ? (
-                    <div className="hero-search__results">
-                      {previewResults.map((result) => (
-                        <article key={result.id} className="hero-search__result" role="option">
-                          <span
-                            className={`hero-search__result-badge hero-search__result-badge--${result.kind}`}
-                          >
-                            {resultKindLabels[result.kind]}
-                          </span>
-
-                          <div className="hero-search__result-content">
-                            <h3 className="hero-search__result-title">{result.title}</h3>
-                            <p className="hero-search__result-text">{result.description}</p>
-                            <p className="hero-search__result-meta">{result.meta}</p>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="hero-search__empty">
-                      <p className="hero-search__empty-title">
-                        Nenhuma prévia pronta para esse termo.
-                      </p>
-                      <p className="hero-search__empty-text">
-                        Entre na plataforma para explorar mais perfis, desafios e oportunidades
-                        relacionadas à sua busca.
-                      </p>
-                    </div>
-                  )}
-
-                  <Link to="/login" className="hero-search__more">
-                    + ver mais resultados
-                  </Link>
-                </div>
-              )}
+            <div className="hero__actions hero__actions--centered">
+              <Link to="/login" className="btn btn-primary btn-lg">
+                Publicar um desafio
+              </Link>
+              <Link to="/como-funciona" className="btn btn-outline btn-lg">
+                Ver como funciona
+              </Link>
             </div>
           </div>
 
-          <div className="hero__support">
-            <div className="hero__support-top">
-              <div className="hero-search__footer">
-                <span className="hero-search__hint">Experimente com:</span>
-
-                <div className="hero-search__suggestions">
-                  {heroSuggestions.map((suggestion) => (
-                    <button
-                      key={suggestion}
-                      type="button"
-                      className="hero-search__suggestion"
-                      onClick={() => applySuggestion(suggestion)}
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
+          <div className="hero__support hero__support--compact">
+            <div className="hero__signals">
+              {heroSignals.map((signal) => (
+                <div key={signal.label} className="hero__signal">
+                  <div className="hero__signal-value">{signal.value}</div>
+                  <div className="hero__signal-label">{signal.label}</div>
                 </div>
-              </div>
-
-              <div className="hero__support-meta">
-                <div className="hero__actions">
-                  <Link to="/login" className="hero__text-link">
-                    Publicar um desafio
-                  </Link>
-                  <Link to="/como-funciona" className="hero__text-link">
-                    Ver como funciona
-                  </Link>
-                </div>
-              </div>
+              ))}
             </div>
 
             <div className="hero__support-grid">
@@ -451,15 +153,6 @@ export default function HomePage() {
                   <h3 className="hero__support-card-title">{card.title}</h3>
                   <p className="hero__support-card-text">{card.text}</p>
                 </article>
-              ))}
-            </div>
-
-            <div className="hero__signals">
-              {heroSignals.map((signal) => (
-                <div key={signal.label} className="hero__signal">
-                  <div className="hero__signal-value">{signal.value}</div>
-                  <div className="hero__signal-label">{signal.label}</div>
-                </div>
               ))}
             </div>
           </div>
