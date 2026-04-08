@@ -1,11 +1,7 @@
 import { Link } from 'react-router-dom'
+import FeatureCard from '../components/FeatureCard'
 import Reveal from '../components/Reveal'
-
-const heroSignals = [
-  { value: '500+', label: 'perfis técnicos e científicos mapeados' },
-  { value: '120+', label: 'desafios e demandas com contexto' },
-  { value: '85+', label: 'conexões sugeridas com aderência' },
-]
+import { appIcons } from '../lib/icons'
 
 const heroSupportCards = [
   {
@@ -25,81 +21,24 @@ const heroSupportCards = [
   },
 ]
 
-const problemCards = [
-  {
-    icon: '\u{1F517}',
-    iconClass: 'problem-card__icon--cyan',
-    title: 'Falta de integração',
-    text: 'Universidades e empresas ainda operam com pouca interação estruturada para transformar pesquisa em colaboração aplicada.',
-  },
-  {
-    icon: '\u{1F4CA}',
-    iconClass: 'problem-card__icon--purple',
-    title: 'Baixa maturidade de P&D',
-    text: 'Muitas empresas não sabem onde buscar pesquisa, parceria ou oportunidade para iniciar projetos de inovação com segurança.',
-  },
-  {
-    icon: '\u{1F50D}',
-    iconClass: 'problem-card__icon--pink',
-    title: 'Busca pouco estruturada',
-    text: 'Encontrar especialistas, temas e tecnologias compatíveis ainda é um processo lento, manual e pouco contextualizado.',
-  },
-  {
-    icon: '\u{1F441}',
-    iconClass: 'problem-card__icon--cyan',
-    title: 'Pesquisas pouco visíveis',
-    text: 'Linhas de pesquisa com potencial de aplicação prática seguem fora do radar de empresas que poderiam se beneficiar delas.',
-  },
-  {
-    icon: '\u{1F4B0}',
-    iconClass: 'problem-card__icon--purple',
-    title: 'Decisão sem contexto',
-    text: 'Sem sinais de aderência, prioridade e maturidade, boas conexões levam mais tempo para ganhar tração.',
-  },
-  {
-    icon: '\u{26A1}',
-    iconClass: 'problem-card__icon--pink',
-    title: 'Conhecimento desperdiçado',
-    text: 'A distância entre setor produtivo e pesquisa reduz impacto econômico, visibilidade e capacidade de inovação.',
-  },
-]
-
 const featureCards = [
   {
-    icon: '\u{1F465}',
-    iconClass: '',
-    title: 'Perfis estruturados',
-    text: 'Empresas e pesquisadores apresentam competências, desafios e histórico com mais clareza desde o primeiro contato.',
-  },
-  {
-    icon: '\u{1F91D}',
-    iconClass: 'feature-card__icon--secondary',
+    icon: appIcons.matchmaking,
     title: 'Matchmaking com contexto',
-    text: 'A plataforma aproxima demanda e pesquisa com base em aderência, especialidade e oportunidade real de colaboração.',
+    description:
+      'Conectamos pesquisadores e empresas com base em compatibilidade real de interesses, áreas e objetivos.',
   },
   {
-    icon: '\u{1F50E}',
-    iconClass: 'feature-card__icon--warm',
+    icon: appIcons.search,
     title: 'Busca semântica',
-    text: 'Pesquise por área, setor, tecnologia, localização e vocabulário do problema real em uma experiência única.',
+    description:
+      'Pesquise em linguagem natural e encontre resultados relevantes mesmo sem usar termos técnicos.',
   },
   {
-    icon: '\u{1F4CB}',
-    iconClass: '',
+    icon: appIcons.proposals,
     title: 'Propostas e acompanhamento',
-    text: 'Envie propostas com escopo e cronograma, acompanhe status e mantenha a parceria organizada com mais transparência.',
-  },
-  {
-    icon: '\u{1F4E2}',
-    iconClass: 'feature-card__icon--secondary',
-    title: 'Sinais de compatibilidade',
-    text: 'Indicadores e sinais de aderência ajudam a priorizar conexões mais relevantes com menos ruído no processo.',
-  },
-  {
-    icon: '\u{1F4C8}',
-    iconClass: 'feature-card__icon--warm',
-    title: 'Indicadores estratégicos',
-    text: 'Dados sobre inovação e investimento em P&D ampliam contexto e apoiam decisões com mais maturidade.',
+    description:
+      'Envie propostas, acompanhe o status e gerencie parcerias de forma simples e centralizada.',
   },
 ]
 
@@ -137,21 +76,11 @@ export default function HomePage() {
           </div>
 
           <div className="hero__support hero__support--compact">
-            <div className="hero__signals">
-              {heroSignals.map((signal) => (
-                <div key={signal.label} className="hero__signal">
-                  <div className="hero__signal-value">{signal.value}</div>
-                  <div className="hero__signal-label">{signal.label}</div>
-                </div>
-              ))}
-            </div>
-
             <div className="hero__support-grid">
               {heroSupportCards.map((card) => (
                 <article key={card.eyebrow} className="hero__support-card">
                   <span className="hero__support-card-eyebrow">{card.eyebrow}</span>
                   <h3 className="hero__support-card-title">{card.title}</h3>
-                  <p className="hero__support-card-text">{card.text}</p>
                 </article>
               ))}
             </div>
@@ -159,57 +88,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section problems" id="problemas">
-        <div className="container">
-          <Reveal className="text-center">
-            <span className="section-label">O Desafio</span>
-            <h2 className="section-title">
-              Onde a conexão entre <span className="text-gradient">pesquisa</span> e{' '}
-              <span className="text-gradient">indústria</span> ainda falha
-            </h2>
-            <p className="section-subtitle">
-              A plataforma existe para reduzir gargalos recorrentes entre desafio, expertise e
-              decisão.
-            </p>
-          </Reveal>
-
-          <div className="problems__grid">
-            {problemCards.map((card) => (
-              <Reveal key={card.title}>
-                <div className="problem-card">
-                  <div className={`problem-card__icon ${card.iconClass}`.trim()}>{card.icon}</div>
-                  <h3 className="problem-card__title">{card.title}</h3>
-                  <p className="problem-card__text">{card.text}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section section--muted home-features" id="funcionalidades">
+      <section
+        className="section section--muted home-features home-features--focused"
+        id="funcionalidades"
+      >
         <div className="container">
           <Reveal className="text-center">
             <span className="section-label">Funcionalidades</span>
             <h2 className="section-title">
-              Da <span className="text-gradient">descoberta</span> ao acompanhamento da parceria
+              O fluxo essencial da <span className="text-gradient">P&amp;D Connect</span>
             </h2>
             <p className="section-subtitle">
-              A experiência começa na busca e segue com organização, correspondência, proposta e
-              acompanhamento.
+              Três blocos centrais organizam a descoberta, a conexão e a gestão das parcerias.
             </p>
           </Reveal>
 
-          <div className="features__grid">
+          <div className="features__grid features__grid--three">
             {featureCards.map((card) => (
               <Reveal key={card.title}>
-                <div className="feature-card">
-                  <div className={`feature-card__icon ${card.iconClass}`.trim()}>{card.icon}</div>
-                  <div className="feature-card__content">
-                    <h3 className="feature-card__title">{card.title}</h3>
-                    <p className="feature-card__text">{card.text}</p>
-                  </div>
-                </div>
+                <FeatureCard
+                  icon={card.icon}
+                  title={card.title}
+                  description={card.description}
+                />
               </Reveal>
             ))}
           </div>
