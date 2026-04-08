@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../../../context/AuthContext'
+import './LoginPage.scss'
 
 const defaultLoginState = {
   empresa: {

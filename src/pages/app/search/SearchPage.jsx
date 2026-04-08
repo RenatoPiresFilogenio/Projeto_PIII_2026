@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
-import { buildSearchExperience } from '../mocks/mockSearchData'
-import { useAuth } from '../context/AuthContext'
+import { buildSearchExperience } from '../../../mocks/mockSearchData'
+import { useAuth } from '../../../context/AuthContext'
+import './SearchPage.scss'
 
 const initialQuery = 'solucoes para carros que utilizam bateria eletrica'
 

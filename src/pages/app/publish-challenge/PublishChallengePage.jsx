@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './PublishChallengePage.scss'
 
 const initialForm = {
   titulo: '',

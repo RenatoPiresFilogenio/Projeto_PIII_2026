@@ -1,0 +1,88 @@
+@use '../../../styles/mixins' as *;
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.profile-form-card {
+  display: grid;
+  gap: 22px;
+  padding: 28px;
+  border-radius: 28px;
+}
+
+.profile-form-card__head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profile-form-card__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.profile-side {
+  display: grid;
+  gap: 16px;
+}
+
+.profile-side__card {
+  display: grid;
+  gap: 14px;
+  padding: 20px;
+  border-radius: 24px;
+}
+
+.profile-side__stack {
+  display: grid;
+  gap: 10px;
+}
+
+.profile-side__item {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(36, 58, 105, 0.05);
+}
+
+.profile-side__item strong {
+  color: var(--accent-primary);
+}
+
+.profile-side__item span,
+.profile-side__item small {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+@include media-down(lg) {
+  .profile-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@include media-down(sm) {
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-form-card__head,
+  .profile-form-card__actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

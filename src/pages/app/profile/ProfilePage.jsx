@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../../../context/AuthContext'
+import './ProfilePage.scss'
 
 function buildInitialProfile(user) {
   if (user?.tipoUsuario?.nome === 'empresa') {

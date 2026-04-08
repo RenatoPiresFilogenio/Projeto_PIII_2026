@@ -1,5 +1,7 @@
 import {
   faChartLine,
+  faChevronLeft,
+  faChevronRight,
   faClipboardCheck,
   faHandshake,
   faMagnifyingGlass,
@@ -12,4 +14,6 @@ export const appIcons = {
   proposals: faClipboardCheck,
   indicators: faChartLine,
   security: faShieldHalved,
+  previous: faChevronLeft,
+  next: faChevronRight,
 }

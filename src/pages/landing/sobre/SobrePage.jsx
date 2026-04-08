@@ -1,52 +1,53 @@
 import { Link } from 'react-router-dom'
-import Reveal from '../components/Reveal'
+import Reveal from '../../../components/Reveal'
+import './SobrePage.scss'
 
 const aboutHighlights = [
   {
     title: 'Desafios com contexto',
-    text: 'Empresas descrevem necessidades tecnológicas com mais clareza, prioridade e aderência ao problema real.',
+    text: 'Demandas ficam mais claras, priorizadas e aderentes ao problema real.',
   },
   {
     title: 'Especialistas com aderência',
-    text: 'Pesquisadores e desenvolvedores aparecem com base em área, experiência, tema e potencial de colaboração.',
+    text: 'Perfis aparecem por área, experiência e potencial de colaboração.',
   },
   {
     title: 'Decisão com apoio',
-    text: 'Propostas, indicadores e sinais do ecossistema ajudam a transformar busca em parceria e inovação aplicada.',
+    text: 'Indicadores e sinais do ecossistema ajudam a transformar busca em parceria.',
   },
 ]
 
 const aboutPillars = [
   {
     eyebrow: 'Conexão qualificada',
-    title: 'A plataforma aproxima empresas e pesquisadores no mesmo fluxo.',
-    text: 'A busca organiza problema, setor, tecnologia e perfil técnico para tornar a conexão mais objetiva desde o primeiro contato.',
+    title: 'Empresas e pesquisadores no mesmo fluxo.',
+    text: 'Organiza problema, setor e perfil técnico para tornar a conexão mais objetiva.',
   },
   {
     eyebrow: 'Desafios tecnológicos',
-    title: 'Demandas reais ganham visibilidade, contexto e direcionamento.',
-    text: 'Empresas conseguem estruturar desafios com mais clareza, facilitando entendimento, aderência e priorização de possíveis parceiros.',
+    title: 'Demandas reais ganham clareza e direção.',
+    text: 'Estrutura desafios e ajuda a priorizar parceiros mais aderentes.',
   },
   {
     eyebrow: 'Propostas e soluções',
-    title: 'A colaboração evolui de interesse para proposta concreta.',
-    text: 'Pesquisadores podem responder demandas com caminhos de solução, metodologia e possibilidade de parceria aplicada.',
+    title: 'A colaboração evolui para proposta concreta.',
+    text: 'Permite responder demandas com método, proposta e parceria aplicada.',
   },
   {
     eyebrow: 'Dados e indicadores',
-    title: 'Informação estratégica apoia decisões mais maduras de inovação.',
-    text: 'Indicadores e informações estratégicas ampliam o contexto da busca e ajudam a orientar próximos passos com mais segurança.',
+    title: 'Decisões ficam mais maduras e seguras.',
+    text: 'Amplia o contexto da busca e orienta próximos passos com mais segurança.',
   },
 ]
 
 const aboutOdsFacts = [
   {
     label: 'Meta 9.5',
-    text: 'Fortalecer a pesquisa científica e ampliar capacidades tecnológicas industriais com mais incentivo à inovação.',
+    text: 'Fortalecer a pesquisa científica e ampliar capacidades tecnológicas com incentivo à inovação.',
   },
   {
     label: 'Impacto esperado',
-    text: 'Reduzir a distância entre universidade e mercado, ampliando a aplicação prática do conhecimento produzido no país.',
+    text: 'Aproximar universidade e mercado para ampliar a aplicação prática do conhecimento.',
   },
 ]
 
@@ -63,26 +64,22 @@ export default function SobrePage() {
               <div className="about-hero__content">
                 <div className="about-hero__badge">
                   <span className="badge-dot"></span>
-                  Sobre a Innovare
+                  Sobre a P&amp;D Connect
                 </div>
 
-                <h1 className="about-hero__title">
-                  Transformamos pesquisa aplicada em conexão real com a indústria.
-                </h1>
+                <h1 className="about-hero__title">Pesquisa aplicada conectada à indústria.</h1>
 
                 <div className="about-hero__body">
                   <p className="about-hero__text">
-                    A Innovare é uma plataforma web criada para aproximar empresas que enfrentam
-                    desafios tecnológicos de pesquisadores e desenvolvedores capazes de responder
-                    com conhecimento, propostas e soluções em desenvolvimento.
+                    A P&amp;D Connect aproxima empresas com desafios tecnológicos de pesquisadores
+                    capazes de responder com conhecimento e proposta aplicada.
                   </p>
 
                   <div className="about-hero__support-block">
-                    <span className="about-hero__support-label">Menos dispersão, mais contexto</span>
+                    <span className="about-hero__support-label">Menos dispersão, mais clareza</span>
                     <p className="about-hero__support">
-                      Em vez de espalhar problema, especialista e oportunidade em vários lugares,
-                      organizamos tudo em uma experiência mais clara de descoberta, colaboração e
-                      avanço da inovação.
+                      Problema, especialista e oportunidade passam a coexistir em um fluxo mais
+                      claro de descoberta e colaboração.
                     </p>
                   </div>
                 </div>
@@ -112,8 +109,8 @@ export default function SobrePage() {
             <span className="section-label">Pilares da plataforma</span>
             <h2 className="section-title">Problema, expertise e decisão no mesmo fluxo.</h2>
             <p className="section-subtitle">
-              Cada camada da plataforma ajuda a transformar uma demanda difusa em oportunidade
-              concreta de colaboração, pesquisa aplicada e inovação.
+              A plataforma organiza demanda, parceria e direcionamento em uma leitura mais
+              objetiva.
             </p>
           </Reveal>
 
@@ -144,22 +141,19 @@ export default function SobrePage() {
               <div className="about-ods-panel__intro">
                 <span className="section-label">ODS 9</span>
                 <h2 className="section-title about-ods-panel__title">
-                  Alinhada à indústria, inovação e fortalecimento da pesquisa aplicada.
+                  Alinhada à indústria e à pesquisa aplicada.
                 </h2>
               </div>
 
               <div className="about-ods-panel__body">
                 <div className="about-ods-panel__content">
                   <p className="section-subtitle about-ods-panel__text">
-                    A Innovare contribui para reduzir a distância entre produção científica e
-                    necessidade produtiva ao criar um ambiente digital que aproxima empresas,
-                    pesquisadores e oportunidades de inovação com mais contexto, visibilidade e
-                    capacidade de ação.
+                    A plataforma reduz a distância entre produção científica e demanda produtiva ao
+                    aproximar empresas, pesquisadores e oportunidades com mais contexto.
                   </p>
                   <p className="about-ods-panel__text about-ods-panel__text--secondary">
-                    Esse alinhamento conversa diretamente com a Meta 9.5 da ODS 9, que propõe
-                    fortalecer a pesquisa científica, ampliar capacidades tecnológicas industriais
-                    e incentivar inovação com impacto econômico e social.
+                    Esse movimento se conecta à Meta 9.5 da ODS 9, fortalecendo pesquisa
+                    científica, capacidade tecnológica e inovação com impacto.
                   </p>
                 </div>
 
@@ -186,8 +180,7 @@ export default function SobrePage() {
                 <span className="text-gradient">conectado</span>
               </h2>
               <p className="cta-box__subtitle">
-                Entre na plataforma e comece a transformar desafios, expertise e oportunidades
-                em colaboração aplicada.
+                Cadastre-se e transforme desafio, expertise e oportunidade em colaboração aplicada.
               </p>
               <div className="cta-box__buttons">
                 <Link to="/login" className="btn btn-primary btn-lg">

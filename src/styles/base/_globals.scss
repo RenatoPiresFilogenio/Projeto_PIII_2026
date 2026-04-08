@@ -1,0 +1,60 @@
+@use '../variables' as *;
+
+:root {
+  --bg-primary: #{$color-bg-primary};
+  --bg-secondary: #{$color-bg-secondary};
+  --bg-tertiary: #{$color-bg-tertiary};
+  --bg-card: #{$color-surface};
+  --bg-card-hover: #{$color-surface-hover};
+
+  --accent-primary: #{$color-primary};
+  --accent-secondary: #{$color-secondary};
+  --accent-warm: #{$color-warm};
+  --accent-green: #{$color-green};
+
+  --accent-primary-dim: #{rgba($color-primary, 0.14)};
+  --accent-secondary-dim: #{rgba($color-secondary, 0.18)};
+  --accent-warm-dim: #{rgba($color-warm, 0.55)};
+
+  --shadow-accent: #{$shadow-accent};
+  --shadow-secondary: #{$shadow-secondary};
+
+  --text-primary: #{$color-text-primary};
+  --text-secondary: #{$color-text-secondary};
+  --text-muted: #{$color-text-muted};
+  --text-inverse: #{$color-text-inverse};
+  --text-inverse-muted: #{$color-text-inverse-muted};
+
+  --border-color: #{$color-border};
+  --border-accent: #{$color-border-accent};
+
+  --font-primary: #{$font-primary};
+  --font-body: #{$font-body};
+
+  --radius-sm: #{$radius-sm};
+  --radius-md: #{$radius-md};
+  --radius-lg: #{$radius-lg};
+  --radius-xl: #{$radius-xl};
+
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.35s ease;
+  --transition-slow: 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  --max-width: #{$max-width};
+  --nav-height: #{$nav-height};
+}
+
+body {
+  font-family: $font-body;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  line-height: $line-height-body;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
