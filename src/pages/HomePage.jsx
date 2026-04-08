@@ -7,17 +7,17 @@ const heroSupportCards = [
   {
     eyebrow: 'Empresas',
     title: 'Publiquem desafios com contexto e encontrem especialistas aderentes.',
-    text: 'A plataforma aproxima problema, setor e maturidade para acelerar conexões mais objetivas.',
+    text: 'A plataforma aproxima problema, setor e maturidade para acelerar conex\u00f5es mais objetivas.',
   },
   {
     eyebrow: 'Pesquisadores',
-    title: 'Descubram demandas reais compatíveis com sua linha de pesquisa.',
+    title: 'Descubram demandas reais compat\u00edveis com sua linha de pesquisa.',
     text: 'Oportunidades aplicadas aparecem com mais clareza e facilitam propostas de parceria qualificadas.',
   },
   {
     eyebrow: 'Oportunidades',
-    title: 'Cruzem decisões com indicadores, aderência e sinais do ecossistema.',
-    text: 'Mais contexto ajuda a avançar projetos com menos ruído e mais segurança na priorização.',
+    title: 'Cruzem decis\u00f5es com indicadores, ader\u00eancia e sinais do ecossistema.',
+    text: 'Mais contexto ajuda a avan\u00e7ar projetos com menos ru\u00eddo e mais seguran\u00e7a na prioriza\u00e7\u00e3o.',
   },
 ]
 
@@ -26,13 +26,13 @@ const featureCards = [
     icon: appIcons.matchmaking,
     title: 'Matchmaking com contexto',
     description:
-      'Conectamos pesquisadores e empresas com base em compatibilidade real de interesses, áreas e objetivos.',
+      'Conectamos pesquisadores e empresas com base em compatibilidade real de interesses, \u00e1reas e objetivos.',
   },
   {
     icon: appIcons.search,
-    title: 'Busca semântica',
+    title: 'Busca sem\u00e2ntica',
     description:
-      'Pesquise em linguagem natural e encontre resultados relevantes mesmo sem usar termos técnicos.',
+      'Pesquise em linguagem natural e encontre resultados relevantes mesmo sem usar termos t\u00e9cnicos.',
   },
   {
     icon: appIcons.proposals,
@@ -53,16 +53,17 @@ export default function HomePage() {
           <div className="hero__content hero__content--centered">
             <div className="hero__badge">
               <span className="badge-dot"></span>
-              ODS 9 | Pesquisa, indústria e inovação conectadas
+              {'ODS 9 | Pesquisa, ind\u00fastria e inova\u00e7\u00e3o conectadas'}
             </div>
 
             <h1 className="hero__title">
-              Conecte empresas com desafios a pesquisadores com soluções
+              {'Conecte empresas com desafios a pesquisadores com solu\u00e7\u00f5es'}
             </h1>
 
             <p className="hero__description">
-              A Innovare organiza o encontro entre desafios tecnológicos, expertise científica e
-              oportunidades de inovação em uma experiência mais clara e orientada à colaboração.
+              {
+                'A Innovare organiza o encontro entre desafios tecnol\u00f3gicos, expertise cient\u00edfica e oportunidades de inova\u00e7\u00e3o em uma experi\u00eancia mais clara e orientada \u00e0 colabora\u00e7\u00e3o.'
+              }
             </p>
 
             <div className="hero__actions hero__actions--centered">
@@ -99,7 +100,7 @@ export default function HomePage() {
               O fluxo essencial da <span className="text-gradient">P&amp;D Connect</span>
             </h2>
             <p className="section-subtitle">
-              Três blocos centrais organizam a descoberta, a conexão e a gestão das parcerias.
+              {'Tr\u00eas blocos centrais organizam a descoberta, a conex\u00e3o e a gest\u00e3o das parcerias.'}
             </p>
           </Reveal>
 
@@ -125,8 +126,9 @@ export default function HomePage() {
                 Pronto para <span className="text-gradient">transformar busca em parceria</span>?
               </h2>
               <p className="cta-box__subtitle">
-                Junte-se a empresas e pesquisadores que já estão conectando problema, conhecimento e
-                oportunidade com mais clareza.
+                {
+                  'Junte-se a empresas e pesquisadores que j\u00e1 est\u00e3o conectando problema, conhecimento e oportunidade com mais clareza.'
+                }
               </p>
               <div className="cta-box__buttons">
                 <Link to="/login" className="btn btn-primary btn-lg">

@@ -9,23 +9,23 @@ const journeySteps = [
     id: 'cadastro',
     step: '01',
     eyebrow: 'Cadastro de perfis',
-    title: 'Empresas e pesquisadores estruturam sua presenÃ§a na plataforma.',
-    text: 'O primeiro passo organiza quem busca parceria e quem oferece conhecimento, criando uma base mais clara para as conexÃµes.',
+    title: 'Empresas e pesquisadores estruturam sua presen\u00e7a na plataforma.',
+    text: 'O primeiro passo organiza quem busca parceria e quem oferece conhecimento, criando uma base mais clara para as conex\u00f5es.',
     details: [
       {
         label: 'Empresas',
-        text: 'Registram setor de atuaÃ§Ã£o, porte, desafios tecnolÃ³gicos enfrentados, orÃ§amento para projetos de inovaÃ§Ã£o e localizaÃ§Ã£o.',
+        text: 'Registram setor de atua\u00e7\u00e3o, porte, desafios tecnol\u00f3gicos enfrentados, or\u00e7amento para projetos de inova\u00e7\u00e3o e localiza\u00e7\u00e3o.',
       },
       {
         label: 'Pesquisadores',
-        text: 'Cadastram Ã¡reas de atuaÃ§Ã£o, projetos desenvolvidos, instituiÃ§Ã£o de vÃ­nculo e interesse em parceria com empresas.',
+        text: 'Cadastram \u00e1reas de atua\u00e7\u00e3o, projetos desenvolvidos, institui\u00e7\u00e3o de v\u00ednculo e interesse em parceria com empresas.',
       },
     ],
     tags: [
-      { label: 'Setor de atuaÃ§Ã£o' },
+      { label: 'Setor de atua\u00e7\u00e3o' },
       { label: 'Projetos' },
       { label: 'Desafios' },
-      { label: 'LocalizaÃ§Ã£o' },
+      { label: 'Localiza\u00e7\u00e3o' },
       { label: 'Expertise' },
     ],
   },
@@ -33,10 +33,10 @@ const journeySteps = [
     id: 'matchmaking',
     step: '02',
     eyebrow: 'Matchmaking inteligente',
-    title: 'A busca cruza contexto tÃ©cnico, problema e aderÃªncia entre perfis.',
-    text: 'O sistema cruza automaticamente as informaÃ§Ãµes cadastradas, considerando Ã¡rea de pesquisa, mineraÃ§Ã£o de palavras-chave e tipo de problema tecnolÃ³gico. A plataforma utiliza busca semÃ¢ntica e IA para sugerir as conexÃµes com maior relevÃ¢ncia.',
+    title: 'A busca cruza contexto t\u00e9cnico, problema e ader\u00eancia entre perfis.',
+    text: 'O sistema cruza automaticamente as informa\u00e7\u00f5es cadastradas, considerando \u00e1rea de pesquisa, minera\u00e7\u00e3o de palavras-chave e tipo de problema tecnol\u00f3gico. A plataforma utiliza busca sem\u00e2ntica e IA para sugerir as conex\u00f5es com maior relev\u00e2ncia.',
     tags: [
-      { label: 'Busca semÃ¢ntica' },
+      { label: 'Busca sem\u00e2ntica' },
       { label: 'IA matchmaking' },
       { label: 'Palavras-chave' },
       { label: 'Ranking' },
@@ -46,26 +46,26 @@ const journeySteps = [
     id: 'propostas',
     step: '03',
     eyebrow: 'Envio de propostas',
-    title: 'A conexÃ£o evolui para proposta com escopo, mÃ©todo e direÃ§Ã£o.',
-    text: 'Pesquisadores respondem a demandas com propostas de parceria detalhadas, incluindo resumo da abordagem, cronograma de execuÃ§Ã£o e metodologia. As empresas podem avaliar e selecionar as propostas mais adequadas.',
+    title: 'A conex\u00e3o evolui para proposta com escopo, m\u00e9todo e dire\u00e7\u00e3o.',
+    text: 'Pesquisadores respondem a demandas com propostas de parceria detalhadas, incluindo resumo da abordagem, cronograma de execu\u00e7\u00e3o e metodologia. As empresas podem avaliar e selecionar as propostas mais adequadas.',
     tags: [
       { label: 'Resumo' },
       { label: 'Cronograma' },
       { label: 'Metodologia' },
-      { label: 'AvaliaÃ§Ã£o' },
+      { label: 'Avalia\u00e7\u00e3o' },
     ],
   },
   {
     id: 'acompanhamento',
     step: '04',
     eyebrow: 'Acompanhamento do projeto',
-    title: 'As etapas da parceria ficam visÃ­veis com mais clareza e continuidade.',
-    text: 'Acompanhe o status das propostas em tempo real: pendente, aceita, recusada, em andamento ou concluÃ­da. Todas as partes envolvidas tÃªm visibilidade completa do progresso.',
+    title: 'As etapas da parceria ficam vis\u00edveis com mais clareza e continuidade.',
+    text: 'Acompanhe o status das propostas em tempo real: pendente, aceita, recusada, em andamento ou conclu\u00edda. Todas as partes envolvidas t\u00eam visibilidade completa do progresso.',
     tags: [
       { label: 'Pendente', tone: 'warning' },
       { label: 'Aceita', tone: 'success' },
       { label: 'Em andamento', tone: 'primary' },
-      { label: 'ConcluÃ­da', tone: 'secondary' },
+      { label: 'Conclu\u00edda', tone: 'secondary' },
     ],
   },
 ]
@@ -74,18 +74,18 @@ const resourceCards = [
   {
     icon: appIcons.matchmaking,
     title: 'Sinais de compatibilidade',
-    text: 'A plataforma destaca aderÃªncia entre perfis, desafios e temas para tornar a descoberta mais objetiva e contextualizada.',
+    text: 'A plataforma destaca ader\u00eancia entre perfis, desafios e temas para tornar a descoberta mais objetiva e contextualizada.',
   },
   {
     icon: appIcons.indicators,
     title: 'Dashboard de indicadores',
-    text: 'Visualize dados sobre pesquisadores, investimentos em P&D e comparaÃ§Ãµes regionais para entender o cenÃ¡rio de inovaÃ§Ã£o.',
+    text: 'Visualize dados sobre pesquisadores, investimentos em P&D e compara\u00e7\u00f5es regionais para entender o cen\u00e1rio de inova\u00e7\u00e3o.',
     iconModifier: 'feature-card__icon--secondary',
   },
   {
     icon: appIcons.security,
-    title: 'SeguranÃ§a de dados',
-    text: 'Todas as informaÃ§Ãµes sÃ£o armazenadas com seguranÃ§a, garantindo a privacidade de empresas e pesquisadores.',
+    title: 'Seguran\u00e7a de dados',
+    text: 'Todas as informa\u00e7\u00f5es s\u00e3o armazenadas com seguran\u00e7a, garantindo a privacidade de empresas e pesquisadores.',
     iconModifier: 'feature-card__icon--warm',
   },
 ]
@@ -105,12 +105,13 @@ export default function ComoFuncionaPage() {
         <div className="container">
           <span className="section-label">Como Funciona</span>
           <h1 className="page-header__title">
-            Do <span className="text-gradient">desafio</span> Ã {' '}
-            <span className="text-gradient">soluÃ§Ã£o</span>
+            Do <span className="text-gradient">desafio</span> {'\u00e0'}{' '}
+            <span className="text-gradient">solu\u00e7\u00e3o</span>
           </h1>
           <p className="page-header__text">
-            Entenda a jornada da plataforma do cadastro atÃ© a evoluÃ§Ã£o das parcerias, com cada
-            etapa organizada para reduzir ruÃ­do e apoiar a prÃ³xima decisÃ£o.
+            {
+              'Entenda a jornada da plataforma do cadastro at\u00e9 a evolu\u00e7\u00e3o das parcerias, com cada etapa organizada para reduzir ru\u00eddo e apoiar a pr\u00f3xima decis\u00e3o.'
+            }
           </p>
         </div>
       </section>
@@ -120,11 +121,10 @@ export default function ComoFuncionaPage() {
           <Reveal className="text-center process-journey__intro">
             <span className="section-label">Fluxo da Plataforma</span>
             <h2 className="section-title">
-              Quatro etapas para transformar busca em colaboraÃ§Ã£o aplicada.
+              {'Quatro etapas para transformar busca em colabora\u00e7\u00e3o aplicada.'}
             </h2>
             <p className="section-subtitle">
-              O fluxo foi desenhado para orientar descoberta, correspondÃªncia, proposta e
-              acompanhamento com mais clareza.
+              {'O fluxo foi desenhado para orientar descoberta, correspond\u00eancia, proposta e acompanhamento com mais clareza.'}
             </p>
           </Reveal>
 
@@ -211,7 +211,7 @@ export default function ComoFuncionaPage() {
           <Reveal className="text-center">
             <span className="section-label">Recursos Adicionais</span>
             <h2 className="section-title">
-              Mais do que <span className="text-gradient">conexÃµes</span>
+              Mais do que <span className="text-gradient">conex\u00f5es</span>
             </h2>
           </Reveal>
 
@@ -239,7 +239,7 @@ export default function ComoFuncionaPage() {
                 Comece <span className="text-gradient">agora</span>
               </h2>
               <p className="cta-box__subtitle">
-                Cadastre-se e descubra oportunidades de inovaÃ§Ã£o esperando por vocÃª.
+                {'Cadastre-se e descubra oportunidades de inova\u00e7\u00e3o esperando por voc\u00ea.'}
               </p>
               <div className="cta-box__buttons">
                 <Link to="/login" className="btn btn-primary btn-lg">
