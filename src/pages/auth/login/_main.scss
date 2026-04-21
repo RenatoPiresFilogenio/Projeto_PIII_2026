@@ -81,6 +81,10 @@
   font-size: 0.9rem;
 }
 
+.login-box__faq-trigger {
+  margin: 18px auto 0;
+}
+
 .login-demo {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -118,6 +122,34 @@
   line-height: 1.7;
 }
 
+.login-note,
+.login-feedback {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: rgba(36, 58, 105, 0.05);
+  border: 1px solid rgba(36, 58, 105, 0.08);
+}
+
+.login-feedback--error {
+  border-color: rgba(168, 60, 60, 0.18);
+}
+
+.login-note strong,
+.login-feedback strong {
+  color: var(--accent-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.login-note p,
+.login-feedback p {
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
 .login-tabs {
   display: flex;
   margin-bottom: 28px;
@@ -151,6 +183,13 @@
 
 .login-register-preview__textarea {
   min-height: 132px;
+}
+
+.login-inline-help {
+  margin-bottom: 18px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.65;
 }
 
 @include media-down(sm) {

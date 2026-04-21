@@ -1,30 +1,238 @@
-import { useMemo, useState } from 'react'
-import { buildSearchExperience } from '../../../mocks/mockSearchData'
+import { useEffect, useMemo, useState } from 'react'
+import { formatBooleanLabel, normalizeText } from '../../../lib/domain'
 import { useAuth } from '../../../context/AuthContext'
+import PageFaq from '../../../components/PageFaq'
+import {
+  getResearcherResume,
+  listCompanies,
+  listResearchers,
+  listUniversities,
+} from '../../../services/pdConnectApi'
 import './SearchPage.scss'
 
-const initialQuery = 'solucoes para carros que utilizam bateria eletrica'
+const defaultQuery = 'pesquisar por nome, universidade, cnpj ou status'
 
-const resultTypeLabels = {
-  pesquisador: 'Pesquisador',
-  pesquisa: 'Pesquisa',
-  desafio: 'Desafio',
-  empresa: 'Empresa',
+const searchFaqSections = [
+  {
+    title: 'O que esta página usa hoje',
+    text: 'A busca atual trabalha com leitura real da API e filtro textual local no front.',
+    items: [
+      'GET /api/companies/',
+      'GET /api/researchers/',
+      'GET /api/universities/',
+      'GET /api/researchers/{id}/resume/',
+    ],
+  },
+  {
+    title: 'O que ainda depende de backend',
+    text: 'Alguns fluxos previstos no projeto ainda não têm rota real disponível e, por isso, não aparecem como funcionalidade completa aqui.',
+    items: [
+      'Login e sessão no backend',
+      'Busca semântica',
+      'Match por IA',
+      'Desafios tecnológicos',
+      'Propostas e atualização de status',
+      'Notificações',
+    ],
+  },
+  {
+    title: 'Como esta tela se comporta',
+    text: 'Empresas e pesquisadores veem a mesma base integrada, mas a aba inicial muda conforme o perfil autenticado para priorizar o tipo de exploração mais útil naquele contexto.',
+  },
+]
+
+function getDefaultTab(userType) {
+  return userType === 'empresa' ? 'pesquisadores' : 'empresas'
+}
+
+function buildResumeLookup(researchers, resumeResults) {
+  return researchers.reduce((lookup, researcher, index) => {
+    const response = resumeResults[index]
+
+    lookup[researcher.id_researcher] =
+      response?.status === 'fulfilled' ? response.value : null
+
+    return lookup
+  }, {})
+}
+
+function buildUniversityLookup(universities) {
+  return universities.reduce((lookup, item) => {
+    lookup[item.id_university] = item
+    return lookup
+  }, {})
 }
 
 export default function SearchPage() {
   const { user } = useAuth()
-  const [query, setQuery] = useState(initialQuery)
-  const [activeQuery, setActiveQuery] = useState(initialQuery)
+  const [query, setQuery] = useState('')
+  const [activeQuery, setActiveQuery] = useState('')
+  const [activeTab, setActiveTab] = useState(() => getDefaultTab(user?.type))
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [isFaqOpen, setIsFaqOpen] = useState(false)
+  const [catalog, setCatalog] = useState({
+    companies: [],
+    researchers: [],
+    universities: [],
+    resumeLookup: {},
+  })
 
-  const searchExperience = useMemo(
-    () => buildSearchExperience(activeQuery, user?.tipoUsuario?.nome),
-    [activeQuery, user]
+  useEffect(() => {
+    setActiveTab(getDefaultTab(user?.type))
+  }, [user?.type])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadCatalog = async () => {
+      setLoading(true)
+      setError('')
+
+      try {
+        const [companies, researchers, universities] = await Promise.all([
+          listCompanies(),
+          listResearchers(),
+          listUniversities(),
+        ])
+
+        const resumeResults = await Promise.allSettled(
+          researchers.map((item) => getResearcherResume(item.id_researcher))
+        )
+
+        if (!isMounted) {
+          return
+        }
+
+        setCatalog({
+          companies,
+          researchers,
+          universities,
+          resumeLookup: buildResumeLookup(researchers, resumeResults),
+        })
+      } catch (loadFailure) {
+        if (!isMounted) {
+          return
+        }
+
+        setError(
+          loadFailure.message || 'Não foi possível carregar os dados reais da API para o painel.'
+        )
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadCatalog()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const universityLookup = useMemo(
+    () => buildUniversityLookup(catalog.universities),
+    [catalog.universities]
   )
+
+  const companyItems = useMemo(() => (
+    catalog.companies.map((company) => ({
+      id: `company-${company.id_company}`,
+      type: 'empresa',
+      title: company.name,
+      subtitle: company.cnpj,
+      description:
+        `Situação cadastral: ${company.registration_status || 'não informada'}. ` +
+        `Status do cadastro: ${formatBooleanLabel(company.status, {
+          trueLabel: 'ativo',
+          falseLabel: 'inativo',
+          nullLabel: 'não informado',
+        })}.`,
+      tags: [
+        company.registration_status || 'Sem situação',
+        company.status ? 'Ativa' : 'Inativa',
+      ],
+    }))
+  ), [catalog.companies])
+
+  const researcherItems = useMemo(() => (
+    catalog.researchers.map((researcher) => {
+      const university = universityLookup[researcher.university]
+      const resume = catalog.resumeLookup[researcher.id_researcher]
+
+      return {
+        id: `researcher-${researcher.id_researcher}`,
+        type: 'pesquisador',
+        title: researcher.name,
+        subtitle: university?.name || 'Universidade não identificada',
+        description:
+          `Disponibilidade: ${formatBooleanLabel(researcher.availability, {
+            trueLabel: 'disponível',
+            falseLabel: 'indisponível',
+            nullLabel: 'não informada',
+          })}. ` +
+          `Status do cadastro: ${formatBooleanLabel(researcher.status, {
+            trueLabel: 'ativo',
+            falseLabel: 'inativo',
+            nullLabel: 'não informado',
+          })}.`,
+        tags: [
+          university?.name || 'Universidade não localizada',
+          `${resume?.education?.length || 0} formações`,
+          `${resume?.experience?.length || 0} experiências`,
+          ...(resume?.skill || []).slice(0, 2).map((item) => item.description),
+        ],
+      }
+    })
+  ), [catalog.researchers, catalog.resumeLookup, universityLookup])
+
+  const universityItems = useMemo(() => (
+    catalog.universities.map((university) => {
+      const linkedResearchers = catalog.researchers.filter(
+        (researcher) => researcher.university === university.id_university
+      )
+
+      return {
+        id: `university-${university.id_university}`,
+        type: 'universidade',
+        title: university.name,
+        subtitle: `${linkedResearchers.length} pesquisador(es) vinculado(s)`,
+        description:
+          linkedResearchers.length > 0
+            ? `Cadastros ligados: ${linkedResearchers.map((item) => item.name).join(', ')}.`
+            : 'Nenhum pesquisador está vinculado a esta universidade no backend atual.',
+        tags: ['Universidade', `${linkedResearchers.length} vinculados`],
+      }
+    })
+  ), [catalog.researchers, catalog.universities])
+
+  const visibleItems = useMemo(() => {
+    const sourceMap = {
+      empresas: companyItems,
+      pesquisadores: researcherItems,
+      universidades: universityItems,
+    }
+
+    const source = sourceMap[activeTab] || []
+    const normalizedQuery = normalizeText(activeQuery)
+
+    if (!normalizedQuery) {
+      return source
+    }
+
+    return source.filter((item) => normalizeText([
+      item.title,
+      item.subtitle,
+      item.description,
+      ...item.tags,
+    ].join(' ')).includes(normalizedQuery))
+  }, [activeQuery, activeTab, companyItems, researcherItems, universityItems])
 
   const handleSubmit = (event) => {
     event.preventDefault()
-    setActiveQuery(query.trim() || initialQuery)
+    setActiveQuery(query.trim())
   }
 
   return (
@@ -32,37 +240,47 @@ export default function SearchPage() {
       <div className="container app-page__container">
         <header className="app-page__header">
           <div>
-            <span className="section-label">Pesquisa principal</span>
-            <h1 className="app-page__title">Pesquisa semantica com leitura de contexto</h1>
+            <span className="section-label">Painel integrado</span>
+            <h1 className="app-page__title">Exploração dos dados reais da plataforma</h1>
           </div>
-          <p className="app-page__subtitle">
-            Descreva o problema em linguagem natural. A plataforma organiza temas, areas e resultados por aderencia semantica.
-          </p>
+          <div className="app-page__header-actions">
+            <p className="app-page__subtitle">
+              Explore empresas, pesquisadores e universidades com base nos dados disponíveis hoje.
+            </p>
+            <button
+              type="button"
+              className="btn btn-outline page-faq-trigger"
+              onClick={() => setIsFaqOpen(true)}
+            >
+              FAQ da página
+            </button>
+          </div>
         </header>
 
         <div className="search-hero-card">
           <div className="search-hero-card__content">
-            <span className="search-hero-card__eyebrow">Busca inteligente</span>
-            <h2 className="search-hero-card__title">
-              Pesquise com uma frase completa e veja a interpretacao da consulta.
-            </h2>
-            <p className="search-hero-card__text">{searchExperience.helper}</p>
+            <span className="search-hero-card__eyebrow">Busca integrada</span>
+            <h2 className="search-hero-card__title">Explore a base atual sem sair do fluxo principal</h2>
+            <p className="search-hero-card__text">
+              Use o filtro para localizar perfis e instituições com rapidez. Os detalhes técnicos
+              da integração ficam disponíveis no FAQ desta página.
+            </p>
           </div>
 
           <form className="app-search-form" onSubmit={handleSubmit}>
-            <label className="sr-only" htmlFor="semantic-search">
-              Buscar desafios, pesquisadores e pesquisas
+            <label className="sr-only" htmlFor="catalog-search">
+              Filtrar dados reais da API
             </label>
             <textarea
-              id="semantic-search"
+              id="catalog-search"
               className="app-search-form__input"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               rows={3}
-              placeholder="Ex.: solucoes para carros que utilizam bateria eletrica"
+              placeholder={defaultQuery}
             />
             <button type="submit" className="btn btn-primary app-search-form__button">
-              Pesquisar
+              Filtrar dados
             </button>
           </form>
         </div>
@@ -70,95 +288,138 @@ export default function SearchPage() {
         <div className="app-search-layout">
           <aside className="semantic-panel">
             <div className="semantic-panel__block">
-              <span className="semantic-panel__label">Consulta ativa</span>
-              <p className="semantic-panel__query">"{activeQuery}"</p>
+              <span className="semantic-panel__label">Perfil autenticado</span>
+              <p className="semantic-panel__query">{user?.displayName}</p>
+              <p className="semantic-panel__text">
+                {user?.type === 'empresa'
+                  ? 'Empresa logada: priorizamos a exploração de pesquisadores e currículos.'
+                  : 'Pesquisador logado: priorizamos a exploração de empresas e universidades.'}
+              </p>
             </div>
 
             <div className="semantic-panel__block">
-              <h3 className="semantic-panel__title">Temas identificados</h3>
+              <h3 className="semantic-panel__title">Coleções disponíveis</h3>
               <div className="semantic-panel__chips">
-                {searchExperience.semantic.themes.map((item) => (
-                  <span key={item} className="semantic-chip semantic-chip--primary">
-                    {item}
-                  </span>
-                ))}
+                <button
+                  type="button"
+                  className={`semantic-chip semantic-chip--button${activeTab === 'pesquisadores' ? ' active' : ''}`}
+                  onClick={() => setActiveTab('pesquisadores')}
+                >
+                  Pesquisadores
+                </button>
+                <button
+                  type="button"
+                  className={`semantic-chip semantic-chip--button${activeTab === 'empresas' ? ' active' : ''}`}
+                  onClick={() => setActiveTab('empresas')}
+                >
+                  Empresas
+                </button>
+                <button
+                  type="button"
+                  className={`semantic-chip semantic-chip--button${activeTab === 'universidades' ? ' active' : ''}`}
+                  onClick={() => setActiveTab('universidades')}
+                >
+                  Universidades
+                </button>
               </div>
             </div>
 
-            <div className="semantic-panel__block">
-              <h3 className="semantic-panel__title">Categorias relacionadas</h3>
-              <div className="semantic-panel__chips">
-                {searchExperience.semantic.categories.map((item) => (
-                  <span key={item} className="semantic-chip">
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="semantic-panel__block">
-              <h3 className="semantic-panel__title">Areas e tecnologias</h3>
-              <div className="semantic-panel__chips">
-                {[...searchExperience.semantic.areas, ...searchExperience.semantic.technologies].map((item) => (
-                  <span key={item} className="semantic-chip semantic-chip--soft">
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="semantic-panel__block">
-              <h3 className="semantic-panel__title">Palavras-chave extraidas</h3>
-              <ul className="semantic-panel__keywords">
-                {searchExperience.semantic.keywords.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <div className="semantic-panel__block semantic-panel__block--faq">
+              <h3 className="semantic-panel__title">Precisa de contexto?</h3>
+              <p className="semantic-panel__text">
+                Abra o FAQ para ver os endpoints usados nesta tela e o que ainda depende de backend.
+              </p>
+              <button
+                type="button"
+                className="btn btn-ghost page-faq-trigger"
+                onClick={() => setIsFaqOpen(true)}
+              >
+                Abrir FAQ
+              </button>
             </div>
           </aside>
 
           <div className="search-results">
             <div className="search-results__header">
               <div>
-                <span className="section-label">Resultados</span>
-                <h2 className="search-results__title">Conexoes sugeridas</h2>
+                <span className="section-label">Resultado atual</span>
+                <h2 className="search-results__title">
+                  {activeTab === 'pesquisadores'
+                    ? 'Base de pesquisadores'
+                    : activeTab === 'empresas'
+                      ? 'Base de empresas'
+                      : 'Base de universidades'}
+                </h2>
               </div>
               <p className="search-results__meta">
-                {searchExperience.results.length} itens por relevancia semantica
+                {visibleItems.length} item(ns) encontrados{activeQuery ? ` para "${activeQuery}"` : '.'}
               </p>
             </div>
 
-            <div className="search-results__list">
-              {searchExperience.results.map((result) => (
-                <article key={result.id} className="search-result-card">
-                  <div className="search-result-card__top">
-                    <span className={`search-result-card__type search-result-card__type--${result.type}`}>
-                      {resultTypeLabels[result.type]}
-                    </span>
-                    <span className="search-result-card__relevance">{result.relevance}</span>
-                  </div>
+            {loading ? (
+              <div className="search-feedback-card">
+                <h3>Carregando dados da API</h3>
+                <p>Estamos consultando os endpoints reais para montar o painel integrado.</p>
+              </div>
+            ) : null}
 
-                  <h3 className="search-result-card__title">{result.title}</h3>
-                  <p className="search-result-card__subtitle">{result.subtitle}</p>
-                  <p className="search-result-card__text">{result.description}</p>
+            {!loading && error ? (
+              <div className="search-feedback-card search-feedback-card--error">
+                <h3>Falha ao carregar o painel</h3>
+                <p>{error}</p>
+              </div>
+            ) : null}
 
-                  <div className="search-result-card__tags">
-                    {result.tags.map((tag) => (
-                      <span key={tag} className="search-result-card__tag">
-                        {tag}
+            {!loading && !error && visibleItems.length === 0 ? (
+              <div className="search-feedback-card">
+                <h3>Nenhum resultado encontrado</h3>
+                <p>
+                  Ajuste o filtro textual ou troque a coleção ativa para explorar outra parte da
+                  base integrada.
+                </p>
+              </div>
+            ) : null}
+
+            {!loading && !error && visibleItems.length > 0 ? (
+              <div className="search-results__list">
+                {visibleItems.map((item) => (
+                  <article key={item.id} className="search-result-card">
+                    <div className="search-result-card__top">
+                      <span className={`search-result-card__type search-result-card__type--${item.type}`}>
+                        {item.type === 'pesquisador'
+                          ? 'Pesquisador'
+                          : item.type === 'empresa'
+                            ? 'Empresa'
+                            : 'Universidade'}
                       </span>
-                    ))}
-                  </div>
+                    </div>
 
-                  <button type="button" className="btn btn-ghost search-result-card__button">
-                    {result.cta}
-                  </button>
-                </article>
-              ))}
-            </div>
+                    <h3 className="search-result-card__title">{item.title}</h3>
+                    <p className="search-result-card__subtitle">{item.subtitle}</p>
+                    <p className="search-result-card__text">{item.description}</p>
+
+                    <div className="search-result-card__tags">
+                      {item.tags.map((tag) => (
+                        <span key={`${item.id}-${tag}`} className="search-result-card__tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </article>
+                ))}
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
+
+      <PageFaq
+        isOpen={isFaqOpen}
+        onClose={() => setIsFaqOpen(false)}
+        title="Busca integrada"
+        intro="Este FAQ resume o que a página já consome do backend e o que ainda está fora do escopo porque depende de rotas que não existem hoje."
+        sections={searchFaqSections}
+      />
     </section>
   )
 }

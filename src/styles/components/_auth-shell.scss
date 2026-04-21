@@ -44,8 +44,15 @@
   line-height: 1.65;
 }
 
+.app-page__header-actions {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+
 .search-hero-card,
 .profile-form-card,
+.profile-tabs-card,
 .challenge-form-card,
 .profile-side__card,
 .semantic-panel,
@@ -105,6 +112,7 @@
 
 .app-search-form__input,
 .profile-field input,
+.profile-field select,
 .profile-field textarea {
   width: 100%;
   padding: 16px 18px;
@@ -120,9 +128,47 @@
 
 .app-search-form__input:focus,
 .profile-field input:focus,
+.profile-field select:focus,
 .profile-field textarea:focus {
   border-color: rgba(91, 136, 165, 0.42);
   box-shadow: 0 0 0 4px rgba(91, 136, 165, 0.12);
+}
+
+.route-state {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  background:
+    radial-gradient(circle at top left, rgba(91, 136, 165, 0.1) 0%, transparent 28%),
+    linear-gradient(180deg, rgba(248, 244, 239, 0.92) 0%, rgba(212, 205, 197, 0.96) 100%);
+}
+
+.route-state__container {
+  display: flex;
+  justify-content: center;
+}
+
+.route-state__card {
+  max-width: 640px;
+  display: grid;
+  gap: 14px;
+  padding: 28px;
+  border-radius: 28px;
+  border: 1px solid rgba(36, 58, 105, 0.08);
+  background: rgba(248, 244, 239, 0.88);
+  box-shadow: 0 20px 36px rgba(25, 16, 19, 0.08);
+}
+
+.route-state__title {
+  color: var(--accent-primary);
+  font-family: var(--font-primary);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 800;
+}
+
+.route-state__text {
+  color: var(--text-secondary);
+  line-height: 1.7;
 }
 
 .search-result-card__type,

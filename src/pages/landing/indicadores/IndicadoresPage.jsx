@@ -1,39 +1,30 @@
+import { useEffect, useMemo, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import Reveal from '../../../components/Reveal'
 import { useAuth } from '../../../context/AuthContext'
+import {
+  listCompanies,
+  listEducations,
+  listExperiences,
+  listResearchers,
+  listResumes,
+  listSkills,
+  listUniversities,
+} from '../../../services/pdConnectApi'
 import './IndicadoresPage.scss'
 
-const overviewIndicators = [
-  { eyebrow: 'Base científica', value: '180 mil+', label: 'Pesquisadores ativos no Brasil', progress: 85 },
-  { eyebrow: 'Investimento em P&D', value: '1,3%', label: 'PIB investido em P&D', progress: 45 },
-  { eyebrow: 'Capilaridade acadêmica', value: '350+', label: 'Universidades com pesquisa', progress: 72 },
-  { eyebrow: 'Produção anual', value: '48 mil+', label: 'Artigos científicos por ano', progress: 68 },
-]
+function formatMetric(value) {
+  return new Intl.NumberFormat('pt-BR').format(value || 0)
+}
 
-const secondaryIndicators = [
-  { eyebrow: 'Posicionamento global', value: '13º', label: 'Ranking em produção científica', progress: 60 },
-  { eyebrow: 'Propriedade intelectual', value: '7,5 mil+', label: 'Patentes registradas por ano', progress: 38 },
-  { eyebrow: 'Aplicação prática', value: '25%', label: 'Pesquisas aplicadas ao mercado', progress: 25 },
-  { eyebrow: 'Rede de inovação', value: '2,2 mil+', label: 'Grupos de pesquisa em inovação', progress: 55 },
-]
+function buildHeight(value, total) {
+  if (!total) {
+    return '22%'
+  }
 
-const regionalDistribution = [
-  { label: 'Sudeste', value: '70%', height: '70%' },
-  { label: 'Sul', value: '45%', height: '45%' },
-  { label: 'Nordeste', value: '35%', height: '35%' },
-  { label: 'Centro-Oeste', value: '25%', height: '25%' },
-  { label: 'Norte', value: '15%', height: '15%' },
-]
-
-const areaDistribution = [
-  { label: 'Engenharias', value: '80 mil', height: '80%' },
-  { label: 'Saúde', value: '65 mil', height: '65%' },
-  { label: 'Exatas', value: '55 mil', height: '55%' },
-  { label: 'Agrárias', value: '45 mil', height: '45%' },
-  { label: 'Humanas', value: '40 mil', height: '40%' },
-  { label: 'Biológicas', value: '30 mil', height: '30%' },
-]
+  return `${Math.max(22, Math.round((value / total) * 100))}%`
+}
 
 function IndicatorCard({ item, shouldReduceMotion }) {
   return (
@@ -89,6 +80,210 @@ function DistributionChart({ eyebrow, title, subtitle, items, secondary = false,
 export default function IndicadoresPage() {
   const shouldReduceMotion = useReducedMotion()
   const { isAuthenticated } = useAuth()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+  const [metrics, setMetrics] = useState({
+    companies: [],
+    researchers: [],
+    universities: [],
+    resumes: [],
+    educations: [],
+    experiences: [],
+    skills: [],
+  })
+
+  useEffect(() => {
+    let isMounted = true
+
+    const loadMetrics = async () => {
+      setLoading(true)
+      setError('')
+
+      try {
+        const [
+          companies,
+          researchers,
+          universities,
+          resumes,
+          educations,
+          experiences,
+          skills,
+        ] = await Promise.all([
+          listCompanies(),
+          listResearchers(),
+          listUniversities(),
+          listResumes(),
+          listEducations(),
+          listExperiences(),
+          listSkills(),
+        ])
+
+        if (!isMounted) {
+          return
+        }
+
+        setMetrics({
+          companies,
+          researchers,
+          universities,
+          resumes,
+          educations,
+          experiences,
+          skills,
+        })
+      } catch (loadFailure) {
+        if (!isMounted) {
+          return
+        }
+
+        setError(
+          loadFailure.message || 'Não foi possível consolidar os indicadores com a base atual da API.'
+        )
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    loadMetrics()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const companyCount = metrics.companies.length
+  const researcherCount = metrics.researchers.length
+  const universityCount = metrics.universities.length
+  const activeCompanies = metrics.companies.filter((item) => item.status === true).length
+  const availableResearchers = metrics.researchers.filter((item) => item.availability === true).length
+  const activeResearchers = metrics.researchers.filter((item) => item.status === true).length
+
+  const overviewIndicators = useMemo(() => ([
+    {
+      eyebrow: 'Empresas',
+      value: formatMetric(companyCount),
+      label: 'Cadastros disponíveis em `GET /api/companies/`',
+      progress: companyCount ? 100 : 16,
+    },
+    {
+      eyebrow: 'Pesquisadores',
+      value: formatMetric(researcherCount),
+      label: 'Cadastros disponíveis em `GET /api/researchers/`',
+      progress: researcherCount ? 100 : 16,
+    },
+    {
+      eyebrow: 'Universidades',
+      value: formatMetric(universityCount),
+      label: 'Instituições registradas em `GET /api/universities/`',
+      progress: universityCount ? 100 : 16,
+    },
+    {
+      eyebrow: 'Currículos',
+      value: formatMetric(metrics.resumes.length),
+      label: 'Currículos retornados por `GET /api/resumes/`',
+      progress: metrics.resumes.length ? 100 : 16,
+    },
+  ]), [companyCount, metrics.resumes.length, researcherCount, universityCount])
+
+  const secondaryIndicators = useMemo(() => ([
+    {
+      eyebrow: 'Formações',
+      value: formatMetric(metrics.educations.length),
+      label: 'Itens em `GET /api/educations/`',
+      progress: metrics.educations.length ? 100 : 16,
+    },
+    {
+      eyebrow: 'Experiências',
+      value: formatMetric(metrics.experiences.length),
+      label: 'Itens em `GET /api/experiences/`',
+      progress: metrics.experiences.length ? 100 : 16,
+    },
+    {
+      eyebrow: 'Habilidades',
+      value: formatMetric(metrics.skills.length),
+      label: 'Itens em `GET /api/skills/`',
+      progress: metrics.skills.length ? 100 : 16,
+    },
+    {
+      eyebrow: 'Disponibilidade',
+      value: `${researcherCount ? Math.round((availableResearchers / researcherCount) * 100) : 0}%`,
+      label: 'Pesquisadores marcados como disponíveis',
+      progress: researcherCount ? Math.round((availableResearchers / researcherCount) * 100) : 16,
+    },
+  ]), [
+    availableResearchers,
+    metrics.educations.length,
+    metrics.experiences.length,
+    metrics.skills.length,
+    researcherCount,
+  ])
+
+  const researchersByUniversity = useMemo(() => {
+    const counts = metrics.universities.map((university) => {
+      const linkedResearchers = metrics.researchers.filter(
+        (researcher) => researcher.university === university.id_university
+      ).length
+
+      return {
+        label: university.name,
+        value: linkedResearchers,
+      }
+    })
+
+    const totalLinkedResearchers = counts.reduce((sum, item) => sum + item.value, 0)
+
+    return counts
+      .sort((left, right) => right.value - left.value)
+      .slice(0, 5)
+      .map((item) => ({
+        label: item.label,
+        value: `${item.value} pesquisador(es)`,
+        height: buildHeight(item.value, totalLinkedResearchers),
+      }))
+  }, [metrics.researchers, metrics.universities])
+
+  const statusDistribution = useMemo(() => {
+    const inactiveCompanies = companyCount - activeCompanies
+    const unavailableResearchers = researcherCount - availableResearchers
+
+    const items = [
+      {
+        label: 'Empresas ativas',
+        value: `${activeCompanies}`,
+        raw: activeCompanies,
+      },
+      {
+        label: 'Empresas inativas',
+        value: `${inactiveCompanies}`,
+        raw: inactiveCompanies,
+      },
+      {
+        label: 'Pesquisadores ativos',
+        value: `${activeResearchers}`,
+        raw: activeResearchers,
+      },
+      {
+        label: 'Pesquisadores disponíveis',
+        value: `${availableResearchers}`,
+        raw: availableResearchers,
+      },
+      {
+        label: 'Pesquisadores indisponíveis',
+        value: `${unavailableResearchers}`,
+        raw: unavailableResearchers,
+      },
+    ]
+
+    const maxValue = Math.max(...items.map((item) => item.raw), 0)
+
+    return items.map((item) => ({
+      label: item.label,
+      value: item.value,
+      height: buildHeight(item.raw, maxValue),
+    }))
+  }, [activeCompanies, activeResearchers, availableResearchers, companyCount, researcherCount])
 
   return (
     <>
@@ -96,56 +291,75 @@ export default function IndicadoresPage() {
         <div className="container">
           <span className="section-label">Indicadores</span>
           <h1 className="page-header__title">
-            Leituras de <span className="text-gradient">pesquisa</span> e{' '}
-            <span className="text-gradient">inovação</span>
+            Leituras reais da <span className="text-gradient">base atual</span> do P&amp;D Connect
           </h1>
           <p className="page-header__text">
-            Um panorama do ecossistema que conecta indústria, pesquisa aplicada e capacidade de
-            inovação.
+            Esta página deixou de usar números estáticos e passou a consolidar apenas o que a API
+            realmente entrega hoje.
           </p>
         </div>
       </section>
 
       <section className="section indicators-stage">
         <div className="container">
-          <div className="indicadores__grid">
-            {overviewIndicators.map((item) => (
-              <Reveal key={item.label}>
-                <IndicatorCard item={item} shouldReduceMotion={shouldReduceMotion} />
-              </Reveal>
-            ))}
-          </div>
+          {loading ? (
+            <div className="indicators-feedback">
+              <h2>Carregando indicadores</h2>
+              <p>Consultando os endpoints reais do backend para montar os cards e gráficos.</p>
+            </div>
+          ) : null}
 
-          <div className="indicators__charts">
-            <Reveal>
-              <DistributionChart
-                eyebrow="Distribuição regional"
-                title="Investimento em P&D por região"
-                subtitle="Participação estimada no investimento nacional em pesquisa e desenvolvimento."
-                items={regionalDistribution}
-                shouldReduceMotion={shouldReduceMotion}
-              />
-            </Reveal>
+          {!loading && error ? (
+            <div className="indicators-feedback indicators-feedback--error">
+              <h2>Falha ao carregar indicadores</h2>
+              <p>{error}</p>
+            </div>
+          ) : null}
 
-            <Reveal>
-              <DistributionChart
-                eyebrow="Distribuição por área"
-                title="Pesquisadores por área de atuação"
-                subtitle="Comparativo entre áreas com maior massa crítica de pesquisa no país."
-                items={areaDistribution}
-                secondary
-                shouldReduceMotion={shouldReduceMotion}
-              />
-            </Reveal>
-          </div>
+          {!loading && !error ? (
+            <>
+              <div className="indicadores__grid">
+                {overviewIndicators.map((item) => (
+                  <Reveal key={item.label}>
+                    <IndicatorCard item={item} shouldReduceMotion={shouldReduceMotion} />
+                  </Reveal>
+                ))}
+              </div>
 
-          <div className="indicadores__grid indicators__grid--secondary">
-            {secondaryIndicators.map((item) => (
-              <Reveal key={item.label}>
-                <IndicatorCard item={item} shouldReduceMotion={shouldReduceMotion} />
-              </Reveal>
-            ))}
-          </div>
+              <div className="indicators__charts">
+                <Reveal>
+                  <DistributionChart
+                    eyebrow="Universidades vinculadas"
+                    title="Pesquisadores por universidade"
+                    subtitle="Top 5 instituições pelo número de pesquisadores associados na base atual."
+                    items={researchersByUniversity.length > 0 ? researchersByUniversity : [
+                      { label: 'Sem dados', value: '0', height: '22%' },
+                    ]}
+                    shouldReduceMotion={shouldReduceMotion}
+                  />
+                </Reveal>
+
+                <Reveal>
+                  <DistributionChart
+                    eyebrow="Status dos cadastros"
+                    title="Empresas e pesquisadores por disponibilidade"
+                    subtitle="Leitura combinada dos booleanos de status e disponibilidade existentes no backend."
+                    items={statusDistribution}
+                    secondary
+                    shouldReduceMotion={shouldReduceMotion}
+                  />
+                </Reveal>
+              </div>
+
+              <div className="indicadores__grid indicators__grid--secondary">
+                {secondaryIndicators.map((item) => (
+                  <Reveal key={item.label}>
+                    <IndicatorCard item={item} shouldReduceMotion={shouldReduceMotion} />
+                  </Reveal>
+                ))}
+              </div>
+            </>
+          ) : null}
         </div>
       </section>
 
@@ -154,16 +368,17 @@ export default function IndicadoresPage() {
           <Reveal>
             <div className="cta-box">
               <h2 className="cta-box__title">
-                Transforme sinais em <span className="text-gradient">conexões aplicadas</span>
+                Continue a navegação com o <span className="text-gradient">backend real</span>
               </h2>
               <p className="cta-box__subtitle">
-                Entre na plataforma para aproximar desafio, pesquisa e decisão com mais contexto.
+                Os próximos passos prontos hoje são cadastro, exploração da base e edição de
+                perfil conforme os endpoints existentes.
               </p>
               <div className="cta-box__buttons">
                 {isAuthenticated ? (
                   <>
                     <Link to="/pesquisa" className="btn btn-primary btn-lg">
-                      Voltar para pesquisa
+                      Abrir painel integrado
                     </Link>
                     <Link to="/perfil" className="btn btn-outline btn-lg">
                       Editar perfil
@@ -171,7 +386,7 @@ export default function IndicadoresPage() {
                   </>
                 ) : (
                   <Link to="/login" className="btn btn-primary btn-lg">
-                    Cadastrar-se
+                    Entrar na plataforma
                   </Link>
                 )}
               </div>

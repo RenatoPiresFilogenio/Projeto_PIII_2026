@@ -62,7 +62,7 @@ export default function Navbar() {
         </Link>
 
         <div className={`navbar__links${menuOpen ? ' open' : ''}`} id="navLinks">
-          <Link to="/" className={isActive('/') ? 'active' : ''}>Inicio</Link>
+          <Link to="/" className={isActive('/') ? 'active' : ''}>Início</Link>
           <Link to="/sobre" className={isActive('/sobre') ? 'active' : ''}>Sobre</Link>
           <Link to="/como-funciona" className={isActive('/como-funciona') ? 'active' : ''}>Como funciona</Link>
           <Link to="/indicadores" className={isActive('/indicadores') ? 'active' : ''}>Indicadores</Link>
@@ -78,7 +78,7 @@ export default function Navbar() {
             ) : (
               <>
                 <Link to="/login" className="btn btn-ghost">Entrar</Link>
-                <Link to="/login" className="btn btn-primary">Cadastrar</Link>
+                <Link to="/login#cadastro" className="btn btn-primary">Cadastrar</Link>
               </>
             )}
           </div>
@@ -95,7 +95,7 @@ export default function Navbar() {
           ) : (
             <>
               <Link to="/login" className="btn btn-ghost">Entrar</Link>
-              <Link to="/login" className="btn btn-primary">Cadastrar</Link>
+              <Link to="/login#cadastro" className="btn btn-primary">Cadastrar</Link>
             </>
           )}
         </div>

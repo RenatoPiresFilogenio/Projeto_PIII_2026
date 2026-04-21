@@ -38,6 +38,43 @@
   line-height: 1.6;
 }
 
+.challenge-form-card--notice {
+  gap: 26px;
+}
+
+.challenge-form-card__text {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.challenge-form-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.challenge-form-card__list {
+  display: grid;
+  gap: 12px;
+}
+
+.challenge-form-card__item {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  background: rgba(36, 58, 105, 0.05);
+}
+
+.challenge-form-card__item strong {
+  color: var(--accent-primary);
+}
+
+.challenge-form-card__item span {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
 @include media-down(sm) {
   .challenge-form-grid {
     grid-template-columns: 1fr;

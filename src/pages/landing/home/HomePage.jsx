@@ -6,37 +6,37 @@ import './HomePage.scss'
 
 const heroSupportCards = [
   {
-    eyebrow: 'Empresas',
-    title: 'Publiquem desafios e encontrem especialistas aderentes.',
+    eyebrow: 'Cadastros',
+    title: 'Empresas e pesquisadores entram usando os registros reais da API.',
   },
   {
-    eyebrow: 'Pesquisadores',
-    title: 'Encontrem demandas alinhadas à sua linha de pesquisa.',
+    eyebrow: 'Perfis',
+    title: 'O painel atual integra perfil, currículo, formações e experiências.',
   },
   {
-    eyebrow: 'Oportunidades',
-    title: 'Cruzem contexto, aderência e indicadores na mesma busca.',
+    eyebrow: 'Evolução',
+    title: 'Desafios, propostas e IA seguem previstos, mas dependem do backend.',
   },
 ]
 
 const featureCards = [
   {
     icon: appIcons.matchmaking,
-    title: 'Matchmaking com contexto',
+    title: 'Cadastro aderente ao backend',
     description:
-      'Aproximamos empresas e pesquisadores por aderência de interesses, áreas e objetivos.',
+      'O front agora consome os endpoints reais de empresas, pesquisadores, universidades e currículos.',
   },
   {
     icon: appIcons.search,
-    title: 'Busca semântica',
+    title: 'Exploração da base real',
     description:
-      'Busque em linguagem natural e encontre resultados relevantes sem depender de termos exatos.',
+      'A área autenticada usa filtro textual local sobre os dados carregados da API, sem mocks.',
   },
   {
     icon: appIcons.proposals,
-    title: 'Propostas e acompanhamento',
+    title: 'Indicadores da plataforma',
     description:
-      'Envie propostas, acompanhe o status e gerencie parcerias em um só lugar.',
+      'Os indicadores agora mostram somente métricas que a API atual realmente entrega.',
   },
 ]
 
@@ -54,16 +54,16 @@ export default function HomePage() {
               ODS 9 | Pesquisa, indústria e inovação conectadas
             </div>
 
-            <h1 className="hero__title">Conecte desafios empresariais a pesquisa aplicada</h1>
+            <h1 className="hero__title">Conecte cadastros, currículos e capacidades reais da plataforma</h1>
 
             <p className="hero__description">
-              A P&amp;D Connect aproxima empresas e pesquisadores com busca semântica, contexto
-              técnico e fluxo de parceria.
+              A P&amp;D Connect organiza a conexão entre empresas e pesquisadores e evolui a
+              interface conforme os endpoints reais do backend.
             </p>
 
             <div className="hero__actions hero__actions--centered">
               <Link to="/login" className="btn btn-primary btn-lg">
-                Publicar um desafio
+                Entrar na plataforma
               </Link>
               <Link to="/como-funciona" className="btn btn-outline btn-lg">
                 Ver como funciona
@@ -92,9 +92,9 @@ export default function HomePage() {
           <Reveal className="text-center">
             <span className="section-label">Funcionalidades</span>
             <h2 className="section-title">
-              O fluxo essencial da <span className="text-gradient">P&amp;D Connect</span>
+              O front agora segue o que a <span className="text-gradient">API realmente oferece</span>
             </h2>
-            <p className="section-subtitle">Descoberta, conexão e acompanhamento em um só fluxo.</p>
+            <p className="section-subtitle">Integração correta primeiro, evolução funcional depois.</p>
           </Reveal>
 
           <div className="features__grid features__grid--three">
@@ -112,17 +112,17 @@ export default function HomePage() {
           <Reveal>
             <div className="cta-box">
               <h2 className="cta-box__title">
-                Transforme <span className="text-gradient">busca em parceria</span>
+                Transforme <span className="text-gradient">dados reais em navegação confiável</span>
               </h2>
               <p className="cta-box__subtitle">
-                Entre na plataforma para conectar desafio, conhecimento e oportunidade com mais
-                clareza.
+                Entre na plataforma para explorar a base atual, revisar o perfil e acompanhar a
+                aderência com o backend.
               </p>
               <div className="cta-box__buttons">
                 <Link to="/login" className="btn btn-primary btn-lg">
                   Sou Empresa
                 </Link>
-                <Link to="/login" className="btn btn-outline btn-lg">
+                <Link to="/login#cadastro" className="btn btn-outline btn-lg">
                   Sou Pesquisador
                 </Link>
               </div>

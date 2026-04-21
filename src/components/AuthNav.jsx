@@ -7,25 +7,22 @@ export default function AuthNav() {
 
   const navItems = useMemo(() => {
     const items = [
-      { to: '/pesquisa', label: 'Pesquisa' },
+      { to: '/pesquisa', label: 'Painel' },
       { to: '/app/indicadores', label: 'Indicadores' },
-      { to: '/perfil', label: 'Editar perfil' },
+      { to: '/perfil', label: 'Perfil' },
     ]
 
-    if (user?.tipoUsuario?.nome === 'empresa') {
-      items.push({ to: '/desafios/novo', label: 'Publicar desafio' })
+    if (user?.type === 'empresa') {
+      items.push({ to: '/desafios/novo', label: 'Desafios' })
     }
 
     return items
-  }, [user])
+  }, [user?.type])
 
-  const profileName = user?.tipoUsuario?.nome === 'empresa'
-    ? user?.empresa?.nome
-    : user?.pesquisador?.nome
-
-  const profileMeta = user?.tipoUsuario?.nome === 'empresa'
-    ? user?.empresa?.setor
-    : user?.pesquisador?.universidade?.nome
+  const profileName = user?.displayName || 'Perfil sem nome'
+  const profileMeta = user?.type === 'empresa'
+    ? user?.company?.cnpj || 'Empresa'
+    : user?.university?.name || 'Pesquisador'
 
   return (
     <header className="auth-nav">
@@ -34,11 +31,11 @@ export default function AuthNav() {
           <div className="logo-icon">PD</div>
           <div>
             <div className="auth-nav__brand-title">P&amp;D Connect</div>
-            <div className="auth-nav__brand-subtitle">Area autenticada</div>
+            <div className="auth-nav__brand-subtitle">Área autenticada</div>
           </div>
         </div>
 
-        <nav className="auth-nav__links" aria-label="Navegacao autenticada">
+        <nav className="auth-nav__links" aria-label="Navegação autenticada">
           {navItems.map((item) => (
             <NavLink
               key={item.to}
@@ -53,7 +50,9 @@ export default function AuthNav() {
         <div className="auth-nav__profile">
           <div className="auth-nav__profile-text">
             <span className="auth-nav__profile-name">{profileName}</span>
-            <span className="auth-nav__profile-meta">{profileMeta}</span>
+            <span className="auth-nav__profile-meta">
+              {user?.type === 'empresa' ? 'Empresa' : 'Pesquisador'} | {profileMeta}
+            </span>
           </div>
 
           <button type="button" className="btn btn-ghost auth-nav__logout" onClick={logout}>

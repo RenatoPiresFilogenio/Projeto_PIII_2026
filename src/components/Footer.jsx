@@ -7,10 +7,11 @@ export default function Footer() {
         <div className="footer__grid">
           <div className="footer__brand">
             <div className="footer__brand-name">
-              <span>P&D Connect</span>
+              <span>P&amp;D Connect</span>
             </div>
             <p className="footer__brand-text">
-              Conectando empresas a pesquisadores para impulsionar a inovação tecnológica no Brasil. Alinhado com a ODS 9 da ONU.
+              Conectando empresas a pesquisadores para impulsionar a inovação tecnológica no
+              Brasil. Alinhado com a ODS 9 da ONU.
             </p>
           </div>
 
@@ -39,7 +40,7 @@ export default function Footer() {
         </div>
 
         <div className="footer__bottom">
-          <span>© 2026 P&D Connect. Todos os direitos reservados.</span>
+          <span>© 2026 P&amp;D Connect. Todos os direitos reservados.</span>
           <div className="footer__bottom-links">
             <a href="#">Política de Privacidade</a>
             <a href="#">Termos de Serviço</a>

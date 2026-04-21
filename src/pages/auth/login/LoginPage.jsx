@@ -1,75 +1,220 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { formatBooleanLabel } from '../../../lib/domain'
 import { useAuth } from '../../../context/AuthContext'
+import PageFaq from '../../../components/PageFaq'
+import {
+  listCompanies,
+  listResearchers,
+  listUniversities,
+} from '../../../services/pdConnectApi'
 import './LoginPage.scss'
 
-const defaultLoginState = {
-  empresa: {
-    email: 'contato@ecomove.com.br',
-    password: 'empresa123',
+const loginFaqSections = [
+  {
+    title: 'Como o acesso funciona hoje',
+    text: 'A tela permite escolher um cadastro existente da API para montar a sessão local do front, já que o backend ainda não expõe autenticação própria para empresa e pesquisador.',
   },
-  pesquisador: {
-    email: 'camila.nunes@ufscar.br',
-    password: 'pesquisa123',
+  {
+    title: 'O que esta página usa',
+    items: [
+      'GET /api/companies/',
+      'GET /api/researchers/',
+      'GET /api/universities/',
+      'POST /api/companies/',
+      'POST /api/universities/',
+      'POST /api/resumes/',
+      'POST /api/researchers/',
+    ],
   },
+  {
+    title: 'O que ainda depende de backend',
+    items: [
+      'Login real com validação de credenciais',
+      'Sessão autenticada no backend',
+      'Controle de acesso por token ou cookie',
+      'Recuperação de senha',
+    ],
+  },
+]
+
+const defaultCompanyForm = {
+  name: '',
+  cnpj: '',
+  registrationStatus: 'Ativo',
+  status: 'true',
+}
+
+const defaultResearcherForm = {
+  name: '',
+  availability: 'true',
+  status: 'true',
+  universityId: '',
+  universityName: '',
+}
+
+function toBoolean(value) {
+  return value === 'true'
+}
+
+function getReturnPath(pathname) {
+  return typeof pathname === 'string' && pathname.trim() ? pathname : '/pesquisa'
 }
 
 export default function LoginPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const { isAuthenticated, login, loginWithDemo, demoAccounts } = useAuth()
+  const {
+    authMode,
+    isAuthenticated,
+    signInAsEntity,
+    registerCompany,
+    registerResearcher,
+  } = useAuth()
+
   const [isRegister, setIsRegister] = useState(false)
   const [loginTab, setLoginTab] = useState('empresa')
   const [regTab, setRegTab] = useState('empresa')
-  const [message, setMessage] = useState('')
-  const [loginState, setLoginState] = useState(defaultLoginState)
+  const [isLoadingOptions, setIsLoadingOptions] = useState(true)
+  const [submitLoading, setSubmitLoading] = useState(false)
+  const [loadError, setLoadError] = useState('')
+  const [loginMessage, setLoginMessage] = useState('')
+  const [registerMessage, setRegisterMessage] = useState('')
+  const [isFaqOpen, setIsFaqOpen] = useState(false)
+  const [accessOptions, setAccessOptions] = useState({
+    companies: [],
+    researchers: [],
+    universities: [],
+  })
+  const [selectedEntity, setSelectedEntity] = useState({
+    empresa: '',
+    pesquisador: '',
+  })
+  const [companyForm, setCompanyForm] = useState(defaultCompanyForm)
+  const [researcherForm, setResearcherForm] = useState(defaultResearcherForm)
 
   useEffect(() => {
-    if (location.hash === '#cadastro') {
-      setIsRegister(true)
-    }
-  }, [location])
+    setIsRegister(location.hash === '#cadastro')
+  }, [location.hash])
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/pesquisa', { replace: true })
+      navigate(getReturnPath(location.state?.from), { replace: true })
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, location.state, navigate])
 
-  const toggleForm = (event) => {
-    event.preventDefault()
-    setIsRegister((prev) => !prev)
-    setMessage('')
+  const loadAccessOptions = async () => {
+    setIsLoadingOptions(true)
+    setLoadError('')
+
+    try {
+      const [companies, researchers, universities] = await Promise.all([
+        listCompanies(),
+        listResearchers(),
+        listUniversities(),
+      ])
+
+      setAccessOptions({ companies, researchers, universities })
+    } catch (error) {
+      setLoadError(
+        error.message || 'Não foi possível consultar os cadastros reais da API neste momento.'
+      )
+    } finally {
+      setIsLoadingOptions(false)
+    }
   }
 
-  const handleChange = (type, field, value) => {
-    setLoginState((current) => ({
+  useEffect(() => {
+    loadAccessOptions()
+  }, [])
+
+  const openRegisterForm = (event) => {
+    event.preventDefault()
+    navigate('/login#cadastro')
+    setLoginMessage('')
+    setRegisterMessage('')
+  }
+
+  const openLoginForm = (event) => {
+    event.preventDefault()
+    navigate('/login')
+    setLoginMessage('')
+    setRegisterMessage('')
+  }
+
+  const handleSelectEntity = (type, value) => {
+    setSelectedEntity((current) => ({
       ...current,
-      [type]: {
-        ...current[type],
-        [field]: value,
-      },
+      [type]: value,
     }))
-    setMessage('')
+    setLoginMessage('')
   }
 
-  const handleSubmit = (event) => {
+  const handleCompanyFormChange = (field, value) => {
+    setCompanyForm((current) => ({
+      ...current,
+      [field]: value,
+    }))
+    setRegisterMessage('')
+  }
+
+  const handleResearcherFormChange = (field, value) => {
+    setResearcherForm((current) => ({
+      ...current,
+      [field]: value,
+    }))
+    setRegisterMessage('')
+  }
+
+  const handleLoginSubmit = async (event) => {
     event.preventDefault()
-    const payload = loginState[loginTab]
-    const result = login({
+    setSubmitLoading(true)
+    setLoginMessage('')
+
+    const result = await signInAsEntity({
       type: loginTab,
-      email: payload.email,
-      password: payload.password,
+      id: selectedEntity[loginTab],
     })
 
     if (!result.ok) {
-      setMessage(result.message)
+      setLoginMessage(result.message)
     }
+
+    setSubmitLoading(false)
   }
 
-  const handleDemoAccess = (type) => {
-    loginWithDemo(type)
+  const handleRegisterSubmit = async (event) => {
+    event.preventDefault()
+    setSubmitLoading(true)
+    setRegisterMessage('')
+
+    let result
+
+    if (regTab === 'empresa') {
+      result = await registerCompany({
+        name: companyForm.name.trim(),
+        cnpj: companyForm.cnpj.trim(),
+        registrationStatus: companyForm.registrationStatus.trim(),
+        status: toBoolean(companyForm.status),
+      })
+    } else {
+      result = await registerResearcher({
+        name: researcherForm.name.trim(),
+        availability: toBoolean(researcherForm.availability),
+        status: toBoolean(researcherForm.status),
+        universityId: researcherForm.universityId,
+        universityName: researcherForm.universityName.trim(),
+      })
+    }
+
+    if (!result.ok) {
+      setRegisterMessage(result.message)
+    }
+
+    setSubmitLoading(false)
   }
+
+  const currentOptions = loginTab === 'empresa' ? accessOptions.companies : accessOptions.researchers
 
   return (
     <section className="login-page">
@@ -81,37 +226,31 @@ export default function LoginPage() {
       {!isRegister && (
         <div className="login-box login-box--wide" id="loginBox">
           <div className="login-box__header">
-            <h1 className="login-box__title">Acesse a area autenticada</h1>
+            <h1 className="login-box__title">Acesso com os cadastros reais da API</h1>
             <p className="login-box__subtitle">
-              Depois do login, o usuario vai direto para a tela principal de pesquisa semantica.
+              Escolha um perfil disponível para continuar ou abra o FAQ desta página para entender
+              o funcionamento atual do acesso.
             </p>
+            <button
+              type="button"
+              className="btn btn-outline page-faq-trigger login-box__faq-trigger"
+              onClick={() => setIsFaqOpen(true)}
+            >
+              FAQ da página
+            </button>
           </div>
 
           <div className="login-demo">
             <article className="login-demo__card">
-              <span className="login-demo__eyebrow">Empresa demo</span>
-              <h2 className="login-demo__title">{demoAccounts.empresa.label}</h2>
-              <p className="login-demo__credentials">
-                {demoAccounts.empresa.email}
-                <br />
-                senha: {demoAccounts.empresa.password}
-              </p>
-              <button type="button" className="btn btn-primary" onClick={() => handleDemoAccess('empresa')}>
-                Entrar como empresa
-              </button>
+              <span className="login-demo__eyebrow">Empresas</span>
+              <h2 className="login-demo__title">{accessOptions.companies.length}</h2>
+              <p className="login-demo__credentials">Cadastros disponíveis para acesso no sistema.</p>
             </article>
 
             <article className="login-demo__card">
-              <span className="login-demo__eyebrow">Pesquisador demo</span>
-              <h2 className="login-demo__title">{demoAccounts.pesquisador.label}</h2>
-              <p className="login-demo__credentials">
-                {demoAccounts.pesquisador.email}
-                <br />
-                senha: {demoAccounts.pesquisador.password}
-              </p>
-              <button type="button" className="btn btn-primary" onClick={() => handleDemoAccess('pesquisador')}>
-                Entrar como pesquisador
-              </button>
+              <span className="login-demo__eyebrow">Pesquisadores</span>
+              <h2 className="login-demo__title">{accessOptions.researchers.length}</h2>
+              <p className="login-demo__credentials">Perfis disponíveis para acesso no sistema.</p>
             </article>
           </div>
 
@@ -130,40 +269,74 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleLoginSubmit}>
             <div className="form-group">
-              <label className="form-label" htmlFor="login-email">E-mail</label>
-              <input
-                type="email"
-                id="login-email"
+              <label className="form-label" htmlFor="entity-select">
+                Cadastro disponível
+              </label>
+
+              <select
+                id="entity-select"
                 className="form-input"
-                value={loginState[loginTab].email}
-                onChange={(event) => handleChange(loginTab, 'email', event.target.value)}
-              />
+                value={selectedEntity[loginTab]}
+                onChange={(event) => handleSelectEntity(loginTab, event.target.value)}
+                disabled={isLoadingOptions || submitLoading}
+              >
+                <option value="">Selecione um cadastro</option>
+                {currentOptions.map((item) => (
+                  <option
+                    key={loginTab === 'empresa' ? item.id_company : item.id_researcher}
+                    value={loginTab === 'empresa' ? item.id_company : item.id_researcher}
+                  >
+                    {loginTab === 'empresa'
+                      ? `${item.name} | ${item.cnpj}`
+                      : `${item.name} | disponibilidade ${formatBooleanLabel(item.availability, {
+                        trueLabel: 'ativa',
+                        falseLabel: 'inativa',
+                        nullLabel: 'não informada',
+                      })}`}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="login-password">Senha</label>
-              <input
-                type="password"
-                id="login-password"
-                className="form-input"
-                value={loginState[loginTab].password}
-                onChange={(event) => handleChange(loginTab, 'password', event.target.value)}
-              />
-            </div>
+            <p className="login-inline-help">
+              {loginTab === 'empresa'
+                ? 'Ao entrar como empresa, o sistema carrega o perfil institucional correspondente.'
+                : 'Ao entrar como pesquisador, o sistema carrega o perfil e os dados do currículo correspondente.'}
+            </p>
 
-            {message ? <p className="login-message">{message}</p> : null}
+            {loadError ? (
+              <div className="login-feedback login-feedback--error">
+                <p>{loadError}</p>
+                <button type="button" className="btn btn-ghost" onClick={loadAccessOptions}>
+                  Tentar novamente
+                </button>
+              </div>
+            ) : null}
+
+            {!isLoadingOptions && !loadError && currentOptions.length === 0 ? (
+              <div className="login-feedback">
+                <p>Nenhum cadastro desse perfil foi encontrado na API.</p>
+                <button type="button" className="btn btn-ghost" onClick={(event) => openRegisterForm(event)}>
+                  Ir para cadastro
+                </button>
+              </div>
+            ) : null}
+
+            {loginMessage ? <p className="login-message">{loginMessage}</p> : null}
 
             <div className="form-actions">
-              <button type="submit" className="btn btn-primary">Entrar</button>
+              <button type="submit" className="btn btn-primary" disabled={isLoadingOptions || submitLoading}>
+                {submitLoading ? 'Entrando...' : 'Entrar com esse perfil'}
+              </button>
             </div>
           </form>
 
           <div className="form-divider">ou</div>
 
           <div className="form-footer">
-            Quer visualizar tambem o cadastro? <a href="#cadastro" onClick={toggleForm}>Abrir exemplo de cadastro</a>
+            Ainda não possui cadastro? <a href="/login#cadastro" onClick={openRegisterForm}>Cadastrar novo perfil</a>
           </div>
         </div>
       )}
@@ -171,10 +344,18 @@ export default function LoginPage() {
       {isRegister && (
         <div className="login-box login-box--wide" id="registerBox">
           <div className="login-box__header">
-            <h1 className="login-box__title">Cadastro visual do produto</h1>
+            <h1 className="login-box__title">Cadastro aderente ao backend atual</h1>
             <p className="login-box__subtitle">
-              Esta etapa permanece como demonstracao de interface enquanto o backend ainda nao foi integrado.
+              Preencha os dados do perfil desejado e use o FAQ se quiser entender o que já está
+              integrado nesta etapa.
             </p>
+            <button
+              type="button"
+              className="btn btn-outline page-faq-trigger login-box__faq-trigger"
+              onClick={() => setIsFaqOpen(true)}
+            >
+              FAQ da página
+            </button>
           </div>
 
           <div className="login-tabs">
@@ -192,73 +373,150 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {regTab === 'empresa' ? (
-            <div className="login-register-preview">
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Nome da empresa</label>
-                  <input className="form-input" placeholder="Ex.: EcoMove Mobility" />
+          <form onSubmit={handleRegisterSubmit} className="login-register-preview">
+            {regTab === 'empresa' ? (
+              <>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="company-name">Nome da empresa</label>
+                    <input
+                      id="company-name"
+                      className="form-input"
+                      value={companyForm.name}
+                      onChange={(event) => handleCompanyFormChange('name', event.target.value)}
+                      placeholder="Ex.: EcoMove Mobility"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="company-cnpj">CNPJ</label>
+                    <input
+                      id="company-cnpj"
+                      className="form-input"
+                      value={companyForm.cnpj}
+                      onChange={(event) => handleCompanyFormChange('cnpj', event.target.value)}
+                      placeholder="12.345.678/0001-90"
+                    />
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">CNPJ</label>
-                  <input className="form-input" placeholder="12.345.678/0001-90" />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Setor</label>
-                  <input className="form-input" placeholder="Mobilidade eletrica" />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Localizacao</label>
-                  <input className="form-input" placeholder="Campinas, SP" />
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label">Descricao institucional</label>
-                <textarea className="form-input login-register-preview__textarea" placeholder="Resumo da empresa, foco em P&D e objetivos de parceria." />
-              </div>
-            </div>
-          ) : (
-            <div className="login-register-preview">
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Nome completo</label>
-                  <input className="form-input" placeholder="Ex.: Dra. Camila Nunes" />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Universidade</label>
-                  <input className="form-input" placeholder="Ex.: UFSCar" />
-                </div>
-              </div>
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Areas de atuacao</label>
-                  <input className="form-input" placeholder="Baterias, energia, materiais" />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Disponibilidade</label>
-                  <input className="form-input" placeholder="Disponivel para parceria" />
-                </div>
-              </div>
-              <div className="form-group">
-                <label className="form-label">Resumo academico</label>
-                <textarea className="form-input login-register-preview__textarea" placeholder="Resumo do curriculo, habilidades, experiencias e linhas de pesquisa." />
-              </div>
-            </div>
-          )}
 
-          <div className="form-actions">
-            <button type="button" className="btn btn-primary" onClick={() => setIsRegister(false)}>
-              Voltar para login
-            </button>
-          </div>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="company-status">Situação cadastral</label>
+                    <input
+                      id="company-status"
+                      className="form-input"
+                      value={companyForm.registrationStatus}
+                      onChange={(event) => handleCompanyFormChange('registrationStatus', event.target.value)}
+                      placeholder="Ex.: Ativo"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="company-active">Status do cadastro</label>
+                    <select
+                      id="company-active"
+                      className="form-input"
+                      value={companyForm.status}
+                      onChange={(event) => handleCompanyFormChange('status', event.target.value)}
+                    >
+                      <option value="true">Ativo</option>
+                      <option value="false">Inativo</option>
+                    </select>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="researcher-name">Nome completo</label>
+                    <input
+                      id="researcher-name"
+                      className="form-input"
+                      value={researcherForm.name}
+                      onChange={(event) => handleResearcherFormChange('name', event.target.value)}
+                      placeholder="Ex.: Dra. Camila Nunes"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="researcher-university">Universidade existente</label>
+                    <select
+                      id="researcher-university"
+                      className="form-input"
+                      value={researcherForm.universityId}
+                      onChange={(event) => handleResearcherFormChange('universityId', event.target.value)}
+                    >
+                      <option value="">Selecione uma universidade</option>
+                      {accessOptions.universities.map((item) => (
+                        <option key={item.id_university} value={item.id_university}>
+                          {item.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="researcher-availability">Disponibilidade</label>
+                    <select
+                      id="researcher-availability"
+                      className="form-input"
+                      value={researcherForm.availability}
+                      onChange={(event) => handleResearcherFormChange('availability', event.target.value)}
+                    >
+                      <option value="true">Disponível</option>
+                      <option value="false">Indisponível</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label" htmlFor="researcher-status">Status do cadastro</label>
+                    <select
+                      id="researcher-status"
+                      className="form-input"
+                      value={researcherForm.status}
+                      onChange={(event) => handleResearcherFormChange('status', event.target.value)}
+                    >
+                      <option value="true">Ativo</option>
+                      <option value="false">Inativo</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="researcher-university-new">Nova universidade</label>
+                  <input
+                    id="researcher-university-new"
+                    className="form-input"
+                    value={researcherForm.universityName}
+                    onChange={(event) => handleResearcherFormChange('universityName', event.target.value)}
+                    placeholder="Use este campo se a universidade ainda não existir na base"
+                  />
+                </div>
+              </>
+            )}
+
+            {registerMessage ? <p className="login-message">{registerMessage}</p> : null}
+
+            <div className="form-actions">
+              <button type="submit" className="btn btn-primary" disabled={submitLoading}>
+                {submitLoading ? 'Salvando...' : 'Cadastrar e entrar'}
+              </button>
+            </div>
+          </form>
 
           <div className="form-footer">
-            Para navegar no sistema agora, use os perfis demo na tela de login.
+            Já possui cadastro? <a href="/login" onClick={openLoginForm}>Voltar para o acesso</a>
           </div>
         </div>
       )}
+
+      <PageFaq
+        isOpen={isFaqOpen}
+        onClose={() => setIsFaqOpen(false)}
+        title="Acesso e cadastro"
+        intro={authMode}
+        sections={loginFaqSections}
+      />
     </section>
   )
 }
